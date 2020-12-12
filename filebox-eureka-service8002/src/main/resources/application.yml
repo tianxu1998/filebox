@@ -1,12 +1,14 @@
 server:
-  port: 8001
+  port: 8002
 spring:
   application:
     name: eureka-service
 
 eureka:
   instance:
-    hostname: eureka-service8001
+    hostname: eureka-service8002
   client:
     service-url:
-      defaultZone: http://eureka-service8002:/eureka/
+      defaultZone: http://eureka-service8001:8001/eureka/
+  server:
+    enable-self-preservation: false

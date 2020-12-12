@@ -3,28 +3,34 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>filebox</artifactId>
-        <groupId>top.xufilebox</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.4.0</version>
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>top.xufilebox</groupId>
-    <artifactId>filebox-eureka-service8002</artifactId>
+    <artifactId>hi-service8080</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>filebox-eureka-service8002</name>
-    <description>eureka注册节点8002</description>
+    <name>hi-service8080</name>
+    <description>测试业务</description>
 
     <properties>
         <java.version>1.8</java.version>
+        <spring-cloud.version>2020.0.0-M6</spring-cloud.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
 
         <dependency>
