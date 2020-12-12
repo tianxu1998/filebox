@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: config-service
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/tianxu1998/filebox/
+          search-paths: filebox-config
+          username: 2655541751@qq.com
+          password: x13639600304
+      label: master
+server:
+  port: 8011
+
+eureka:
+  instance:
+    hostname: cinfig-service8011
+  client:
+    service-url:
+      defaultZone: http://eureka-service8001:8001/eureka/, http://eureka-service8002:8002/eureka/
