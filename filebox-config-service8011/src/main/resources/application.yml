@@ -5,7 +5,7 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/tianxu1998/filebox/
+          uri: https://github.com/tianxu1998/filebox
           search-paths: filebox-config
           username: 2655541751@qq.com
           password: x13639600304

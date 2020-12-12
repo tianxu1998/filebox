@@ -1,0 +1,5 @@
+server:
+  port: 8080
+eureka:
+  instance:
+    hostname: eureka-service8001
