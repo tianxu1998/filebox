@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.xufilebox.mybatis.mapper.FDirectoryMapper" >
+  <resultMap id="BaseResultMap" type="top.xufilebox.mybatis.entity.FDirectory" >
+    <id column="dir_id" property="dirId" jdbcType="INTEGER" />
+    <result column="dir_name" property="dirName" jdbcType="VARCHAR" />
+    <result column="parent_dir_id" property="parentDirId" jdbcType="INTEGER" />
+    <result column="owner" property="owner" jdbcType="INTEGER" />
+    <result column="path" property="path" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_by" property="createBy" jdbcType="INTEGER" />
+    <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from f_directory
+    where dir_id = #{dirId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="top.xufilebox.mybatis.entity.FDirectory" >
+    insert into f_directory (dir_id, dir_name, parent_dir_id, 
+      `owner`, `path`, update_time, 
+      create_time, create_by, update_by
+      )
+    values (#{dirId,jdbcType=INTEGER}, #{dirName,jdbcType=VARCHAR}, #{parentDirId,jdbcType=INTEGER}, 
+      #{owner,jdbcType=INTEGER}, #{path,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=INTEGER}, #{updateBy,jdbcType=INTEGER}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="top.xufilebox.mybatis.entity.FDirectory" >
+    update f_directory
+    set dir_name = #{dirName,jdbcType=VARCHAR},
+      parent_dir_id = #{parentDirId,jdbcType=INTEGER},
+      `owner` = #{owner,jdbcType=INTEGER},
+      `path` = #{path,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=INTEGER},
+      update_by = #{updateBy,jdbcType=INTEGER}
+    where dir_id = #{dirId,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select dir_id, dir_name, parent_dir_id, `owner`, `path`, update_time, create_time, 
+    create_by, update_by
+    from f_directory
+    where dir_id = #{dirId,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select dir_id, dir_name, parent_dir_id, `owner`, `path`, update_time, create_time, 
+    create_by, update_by
+    from f_directory
+  </select>
+</mapper>

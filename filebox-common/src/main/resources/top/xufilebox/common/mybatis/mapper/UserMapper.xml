@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.xufilebox.common.mybatis.mapper.UserMapper">
+    <select id="count" resultType="java.lang.Integer">
+        select count(*) from u_user;
+    </select>
+
+    <select id="findUserRoleName" parameterType="java.lang.Integer"
+            resultType="java.lang.String">
+        select role_name
+        from (u_user join u_user_role on u_user.user_id = u_user_role.user_id) join u_role on u_role.role_id = u_user_role.role_id
+        where u_user.user_id = #{userId}
+    </select>
+</mapper>

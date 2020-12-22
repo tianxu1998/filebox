@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.xufilebox.mybatis.mapper.FFileMapper" >
+  <resultMap id="BaseResultMap" type="top.xufilebox.mybatis.entity.FFile" >
+    <id column="file_id" property="fileId" jdbcType="INTEGER" />
+    <result column="file_name" property="fileName" jdbcType="VARCHAR" />
+    <result column="from" property="from" jdbcType="VARCHAR" />
+    <result column="parent_dir_id" property="parentDirId" jdbcType="INTEGER" />
+    <result column="size" property="size" jdbcType="INTEGER" />
+    <result column="hash" property="hash" jdbcType="VARCHAR" />
+    <result column="group" property="group" jdbcType="VARCHAR" />
+    <result column="dfs_path" property="dfsPath" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_by" property="createBy" jdbcType="INTEGER" />
+    <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from f_file
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="top.xufilebox.mybatis.entity.FFile" >
+    insert into f_file (file_id, file_name, `from`, 
+      parent_dir_id, `size`, hash, 
+      `group`, dfs_path, update_time, 
+      create_time, create_by, update_by
+      )
+    values (#{fileId,jdbcType=INTEGER}, #{fileName,jdbcType=VARCHAR}, #{from,jdbcType=VARCHAR}, 
+      #{parentDirId,jdbcType=INTEGER}, #{size,jdbcType=INTEGER}, #{hash,jdbcType=VARCHAR}, 
+      #{group,jdbcType=VARCHAR}, #{dfsPath,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=INTEGER}, #{updateBy,jdbcType=INTEGER}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="top.xufilebox.mybatis.entity.FFile" >
+    update f_file
+    set file_name = #{fileName,jdbcType=VARCHAR},
+      `from` = #{from,jdbcType=VARCHAR},
+      parent_dir_id = #{parentDirId,jdbcType=INTEGER},
+      `size` = #{size,jdbcType=INTEGER},
+      hash = #{hash,jdbcType=VARCHAR},
+      `group` = #{group,jdbcType=VARCHAR},
+      dfs_path = #{dfsPath,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=INTEGER},
+      update_by = #{updateBy,jdbcType=INTEGER}
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select file_id, file_name, `from`, parent_dir_id, `size`, hash, `group`, dfs_path, 
+    update_time, create_time, create_by, update_by
+    from f_file
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select file_id, file_name, `from`, parent_dir_id, `size`, hash, `group`, dfs_path, 
+    update_time, create_time, create_by, update_by
+    from f_file
+  </select>
+</mapper>

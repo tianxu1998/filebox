@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.xufilebox.mybatis.mapper.UUserRoleMapper" >
+  <resultMap id="BaseResultMap" type="top.xufilebox.mybatis.entity.UUserRole" >
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="role_id" property="roleId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_by" property="createBy" jdbcType="INTEGER" />
+    <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+  </resultMap>
+  <insert id="insert" parameterType="top.xufilebox.mybatis.entity.UUserRole" >
+    insert into u_user_role (user_id, role_id, update_time, 
+      create_time, create_by, update_by
+      )
+    values (#{userId,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=INTEGER}, #{updateBy,jdbcType=INTEGER}
+      )
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select user_id, role_id, update_time, create_time, create_by, update_by
+    from u_user_role
+  </select>
+</mapper>

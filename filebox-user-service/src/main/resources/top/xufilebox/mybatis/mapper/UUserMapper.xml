@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.xufilebox.mybatis.mapper.UUserMapper" >
+  <resultMap id="BaseResultMap" type="top.xufilebox.mybatis.entity.UUser" >
+    <id column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="nick_name" property="nickName" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="root_dir_id" property="rootDirId" jdbcType="INTEGER" />
+    <result column="capacity" property="capacity" jdbcType="INTEGER" />
+    <result column="used_capacity" property="usedCapacity" jdbcType="INTEGER" />
+    <result column="disable" property="disable" jdbcType="INTEGER" />
+    <result column="delete" property="delete" jdbcType="INTEGER" />
+    <result column="vip" property="vip" jdbcType="INTEGER" />
+    <result column="completed_information" property="completedInformation" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_by" property="createBy" jdbcType="INTEGER" />
+    <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from u_user
+    where user_id = #{userId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="top.xufilebox.mybatis.entity.UUser" >
+    insert into u_user (user_id, user_name, `name`, 
+      nick_name, phone, email, 
+      root_dir_id, capacity, used_capacity, 
+      `disable`, `delete`, vip, 
+      completed_information, update_time, create_time, 
+      create_by, update_by)
+    values (#{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{nickName,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{rootDirId,jdbcType=INTEGER}, #{capacity,jdbcType=INTEGER}, #{usedCapacity,jdbcType=INTEGER}, 
+      #{disable,jdbcType=INTEGER}, #{delete,jdbcType=INTEGER}, #{vip,jdbcType=INTEGER}, 
+      #{completedInformation,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createBy,jdbcType=INTEGER}, #{updateBy,jdbcType=INTEGER})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="top.xufilebox.mybatis.entity.UUser" >
+    update u_user
+    set user_name = #{userName,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      nick_name = #{nickName,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      root_dir_id = #{rootDirId,jdbcType=INTEGER},
+      capacity = #{capacity,jdbcType=INTEGER},
+      used_capacity = #{usedCapacity,jdbcType=INTEGER},
+      `disable` = #{disable,jdbcType=INTEGER},
+      `delete` = #{delete,jdbcType=INTEGER},
+      vip = #{vip,jdbcType=INTEGER},
+      completed_information = #{completedInformation,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=INTEGER},
+      update_by = #{updateBy,jdbcType=INTEGER}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select user_id, user_name, `name`, nick_name, phone, email, root_dir_id, capacity, 
+    used_capacity, `disable`, `delete`, vip, completed_information, update_time, create_time, 
+    create_by, update_by
+    from u_user
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select user_id, user_name, `name`, nick_name, phone, email, root_dir_id, capacity, 
+    used_capacity, `disable`, `delete`, vip, completed_information, update_time, create_time, 
+    create_by, update_by
+    from u_user
+  </select>
+</mapper>

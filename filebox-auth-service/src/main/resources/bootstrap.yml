@@ -1,16 +1,14 @@
-server:
-  port: 8080
 spring:
   application:
-    name: hi-service
+    name: auth-service
   cloud:
     config:
-      label: master
       profile: dev
+      label: master
       discovery:
         enabled: true
         service-id: config-service
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka-service8001:8001/eureka/, http://eureka-service8002:8002/eureka/
+      defaultZone: http://eureka-service8002:8002/eureka/, http://eureka-service8001:8001/eureka/

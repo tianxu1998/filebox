@@ -1,0 +1,25 @@
+mysql:
+# 读库数目
+  type-aliases-package: top.xufilebox.mybatis.mapper
+  mapper-locations: classpath:/top/xufilebox/mybatis/mapper/*.xml
+  config-location: classpath:/mybatis-config.xml
+  num: 2
+  datasource:
+    write:
+      url: jdbc:mysql://master.db.xufilebox.top:3306/filebox?useUnicode=true&characterEncoding=utf-8&useSSL=true
+      username: root
+      password: rootpassword
+      driver-class-name: com.mysql.cj.jdbc.Driver
+    read1:
+      url: jdbc:mysql://slave1.db.xufilebox.top:3306/filebox?useUnicode=true&characterEncoding=utf-8&useSSL=true
+      username: root
+      password: rootpassword
+      driver-class-name: com.mysql.cj.jdbc.Driver
+    read2:
+      url: jdbc:mysql://slave2.db.xufilebox.top:3306/filebox?useUnicode=true&characterEncoding=utf-8&useSSL=true
+      username: root
+      password: rootpassword
+      driver-class-name: com.mysql.cj.jdbc.Driver
+spring:
+  main:
+    allow-bean-definition-overriding: true

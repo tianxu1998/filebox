@@ -1,10 +1,10 @@
-package top.xufilebox;
+package top.tianxu;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class FileboxConfigService8011ApplicationTests {
+class ConfigServerApplicationTests {
 
     @Test
     void contextLoads() {
