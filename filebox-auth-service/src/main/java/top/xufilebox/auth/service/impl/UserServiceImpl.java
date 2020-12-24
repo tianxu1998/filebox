@@ -2,14 +2,11 @@ package top.xufilebox.auth.service.impl;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
-import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import top.xufilebox.auth.service.IUserService;
 import top.xufilebox.auth.util.JwtTokenUtil;
 import top.xufilebox.common.dto.CreateDTO;
 import top.xufilebox.common.dto.LoginDTO;
@@ -19,6 +16,7 @@ import top.xufilebox.common.mybatis.entity.UserRole;
 import top.xufilebox.common.mybatis.mapper.DirectoryMapper;
 import top.xufilebox.common.mybatis.mapper.UserMapper;
 import top.xufilebox.common.mybatis.mapper.UserRoleMapper;
+import top.xufilebox.common.mybatis.service.IUserService;
 import top.xufilebox.common.redis.RedisTemplateProxy;
 import top.xufilebox.common.result.Result;
 import top.xufilebox.common.result.ResultCode;
@@ -59,6 +57,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (verifyCode == null || verifyCode.equals("") || verifyCode.equals("-1") || !verifyCode.equals(loginDTO.getVerifyCode())) {
             return Result.failed(ResultCode.USER_VERIFYCODE_ERROR);
         }
+        redisTemplateProxy.delete(loginDTO.getVerifyCodeKey());
 
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(User::getUserName, loginDTO.getUserName());
@@ -78,6 +77,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         String userRoleName = userMapper.findUserRoleName(user.getUserId());
         claims.put("role", userRoleName);
         claims.put("userName", user.getUserName());
+        claims.put("userId", user.getUserId());
+        claims.put("nickName", user.getNickName());
         String token = jwtTokenUtil.generateToken(claims);
         data.put("token", token);
 
@@ -92,6 +93,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 || verifyCode.equals("-1") || !verifyCode.equals(createDTO.getVerifyCode())) {
             return Result.failed(ResultCode.USER_VERIFYCODE_ERROR);
         }
+        redisTemplateProxy.delete(createDTO.getVerifyCodeKey());
 
         // 1. 创建用户
         User user = this.createDefaultUser(createDTO);
@@ -108,6 +110,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", "user");
         claims.put("userName", user.getUserName());
+        claims.put("userId", user.getUserId());
+        claims.put("nickName", user.getNickName());
         String token = jwtTokenUtil.generateToken(claims);
         data.put("token", token);
         return Result.success(ResultCode.SUCCESS, data);
@@ -119,6 +123,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         queryWrapper.eq(User::getUserId, user.getUserId());
         userMapper.update(user, queryWrapper);
         return Result.success(ResultCode.SUCCESS, "更新用户成功");
+    }
+
+    @Override
+    public Result<String> logout(String token) {
+        return Result.failed();
     }
 
     private User createDefaultUser(CreateDTO createDTO) {

@@ -1,4 +1,4 @@
-package top.xufilebox.auth.service;
+package top.xufilebox.common.mybatis.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.xufilebox.common.mybatis.entity.Role;

@@ -4,7 +4,9 @@ package top.xufilebox.auth.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import top.xufilebox.auth.service.impl.UserServiceImpl;
 import top.xufilebox.auth.util.VerifyUtil;
@@ -28,6 +30,7 @@ import java.util.UUID;
  * @create: 2020-12-19 10:46
  **/
 @RestController
+@RequestMapping("/auth")
 public class AuthController {
     @Autowired
     UserServiceImpl userService;
@@ -76,7 +79,7 @@ public class AuthController {
         BufferedImage image = (BufferedImage) objs[1];
         String value = objs[0].toString().toLowerCase();
         String key = UUID.randomUUID().toString();
-        redisTemplateProxy.setValue(key, value, 1000 * 60 * 2);
+        redisTemplateProxy.setEX(key, value, 1000 * 60 * 2);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         // 使用ServletOutputStream流可直接输出图片
 //        ServletOutputStream outputStream = response.getOutputStream();
@@ -89,12 +92,17 @@ public class AuthController {
     }
 
     @RequestMapping("/login")
-    public Result login(LoginDTO loginDTO) {
+    public Result login(@RequestBody LoginDTO loginDTO) {
         return userService.login(loginDTO);
     }
 
     @RequestMapping("/create")
-    public Result create(CreateDTO createDTO) {
+    public Result create(@RequestBody CreateDTO createDTO) {
         return userService.create(createDTO);
+    }
+
+    @RequestMapping("/logout")
+    public Result logout(@RequestParam(name = "token") String token) {
+        return userService.logout(token);
     }
 }

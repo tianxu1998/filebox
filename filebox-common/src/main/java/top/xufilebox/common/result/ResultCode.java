@@ -12,7 +12,10 @@ public enum ResultCode {
     USER_PASSWORD_ERROR("U0001", "用户密码错误"),
     USER_NOT_FOUND_ERROR("U0002", "不存在此用户"),
     USER_DISABLED_ERROR("U0003", "用户已经被禁用"),
-    USER_VERIFYCODE_ERROR("U0004", "验证码过期或验证码错误");
+    USER_VERIFYCODE_ERROR("U0004", "验证码过期或验证码错误"),
+    USER_EMPTY_TOKEN("U0005", "用户token为空"),
+    USER_TOKEN_ERROR("U0006", "token过期或token错误"),
+    USER_TOKEN_EXPIRED("U0007", "token过期");
 
     private String code;
     private String msg;

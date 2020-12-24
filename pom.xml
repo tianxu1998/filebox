@@ -10,8 +10,8 @@
         <module>filebox-eureka-service8001</module>
         <module>filebox-eureka-service8002</module>
         <module>filebox-user-service</module>
-        <module>hi-service8080</module>
         <module>filebox-auth-service</module>
+        <module>filebox-gateway-service</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

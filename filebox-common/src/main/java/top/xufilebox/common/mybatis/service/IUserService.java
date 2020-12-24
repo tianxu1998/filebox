@@ -1,4 +1,4 @@
-package top.xufilebox.auth.service;
+package top.xufilebox.common.mybatis.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.xufilebox.common.dto.CreateDTO;
@@ -22,4 +22,6 @@ public interface IUserService extends IService<User> {
     Result<Map<String, String>> create(CreateDTO createDTO);
 
     Result update(User user);
+
+    Result<String> logout(String token);
 }

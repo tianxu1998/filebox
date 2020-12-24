@@ -3,9 +3,9 @@ package top.xufilebox.auth.service.impl;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import top.xufilebox.auth.service.IDirectoryService;
 import top.xufilebox.common.mybatis.entity.Directory;
 import top.xufilebox.common.mybatis.mapper.DirectoryMapper;
+import top.xufilebox.common.mybatis.service.IDirectoryService;
 
 /**
  * <p>
