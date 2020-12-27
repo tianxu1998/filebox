@@ -7,12 +7,12 @@ spring:
       max-wait: -1
       min-idle: 0
   redis-master:
-    host: master.redis.xufilebox.top
+    host: slave1.redis.xufilebox.top
     port: 6379
     password:
     testOnBorrow: true
   redis-slave1:
-    host: slave1.redis.xufilebox.top
+    host: master.redis.xufilebox.top
     port: 6379
     password:
     testOnBorrow: true
