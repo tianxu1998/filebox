@@ -1,5 +1,6 @@
 package top.xufilebox.auth;
 
+import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -12,7 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @create: 2020-12-19 10:50
  **/
 
-@SpringBootApplication(scanBasePackages = "top.xufilebox.**")
+@SpringBootApplication(scanBasePackages = "top.xufilebox.**", exclude = DruidDataSourceAutoConfigure.class)
 @MapperScan("top.xufilebox.common.mybatis.mapper")
 public class AuthApplication {
     public static void main(String[] args) {

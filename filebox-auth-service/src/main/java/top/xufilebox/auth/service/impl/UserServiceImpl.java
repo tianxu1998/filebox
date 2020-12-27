@@ -82,7 +82,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         claims.put("nickName", user.getNickName());
         String token = jwtTokenUtil.generateToken(claims);
         data.put("token", token);
-
         return Result.success(ResultCode.SUCCESS, data);
     }
 

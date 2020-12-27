@@ -30,7 +30,6 @@ public class ReadOnlyInterceptor implements Ordered {
         }finally {
             //清楚DbType一方面为了避免内存泄漏，更重要的是避免对后续在本线程上执行的操作产生影响
             DynamicDataSourceContextHolder.push("master");
-            log.info("清除threadLocal");
         }
     }
 
