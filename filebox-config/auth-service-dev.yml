@@ -1,3 +1,5 @@
+server:
+  port:
 spring:
   redis:
     database: 0
