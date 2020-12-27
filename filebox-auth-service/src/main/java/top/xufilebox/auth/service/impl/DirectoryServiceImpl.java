@@ -16,7 +16,6 @@ import top.xufilebox.common.mybatis.service.IDirectoryService;
  * @since 2020-12-18
  */
 @Service
-@DS("slave_1")
 public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory> implements IDirectoryService {
 
 }

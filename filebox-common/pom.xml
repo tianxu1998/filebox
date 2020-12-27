@@ -6,7 +6,6 @@
         <artifactId>filebox</artifactId>
         <groupId>top.xufilebox</groupId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>top.xufilebox</groupId>
     <artifactId>filebox-common</artifactId>

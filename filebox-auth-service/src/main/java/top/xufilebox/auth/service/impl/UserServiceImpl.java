@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.xufilebox.auth.util.JwtTokenUtil;
+import top.xufilebox.common.annotation.ReadOnly;
 import top.xufilebox.common.dto.CreateDTO;
 import top.xufilebox.common.dto.LoginDTO;
 import top.xufilebox.common.mybatis.entity.Directory;
@@ -36,7 +37,6 @@ import java.util.Map;
  * @since 2020-12-18
  */
 @Service
-@DS("master")
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
     @Autowired
     UserMapper userMapper;
@@ -52,6 +52,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     DirectoryMapper directoryMapper;
 
     @Override
+    @ReadOnly
     public Result<Map<String, String>> login(LoginDTO loginDTO) {
         String verifyCode = redisTemplateProxy.getValue(loginDTO.getVerifyCodeKey());
         if (verifyCode == null || verifyCode.equals("") || verifyCode.equals("-1") || !verifyCode.equals(loginDTO.getVerifyCode())) {
