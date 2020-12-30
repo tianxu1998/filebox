@@ -37,39 +37,6 @@ public class AuthController {
     @Autowired
     RedisTemplateProxy redisTemplateProxy;
 
-    @RequestMapping("/hello")
-    public Result hello() {
-        return Result.success();
-    }
-    @RequestMapping("/insert")
-    public Result insert() {
-        User user = new User();
-        user.setCapacity(1010000);
-        user.setUserName("tianxu");
-        user.setNickName("tianxu123");
-        userService.save(user);
-        return Result.success(ResultCode.SUCCESS, user);
-    }
-
-    @RequestMapping("/delete")
-    public Result delete() {
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(User::getUserName, "tianxu");
-        userService.remove(queryWrapper);
-        return Result.success();
-    }
-
-    @RequestMapping("/set")
-    public Result set() {
-        redisTemplateProxy.setValue("mykey", "value");
-        return Result.success(ResultCode.SUCCESS, "set成功");
-    }
-
-    @RequestMapping("/get")
-    public Result get() {
-        return Result.success(ResultCode.SUCCESS, redisTemplateProxy.getValue("mykey"));
-    }
-
     @RequestMapping("/getVerifyCode")
     public Result getVerifyCode() throws Exception {
         Map map = new HashMap();

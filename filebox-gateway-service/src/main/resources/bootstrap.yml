@@ -1,6 +1,7 @@
+
 spring:
   application:
-    name: auth-service
+    name: gateway-service
   cloud:
     config:
       profile: dev
