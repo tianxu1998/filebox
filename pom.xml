@@ -5,10 +5,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>filebox-common</module>
-        <module>filebox-config-client</module>
         <module>filebox-config-service8011</module>
         <module>filebox-eureka-service8001</module>
-        <module>filebox-eureka-service8002</module>
         <module>filebox-user-service</module>
         <module>filebox-auth-service</module>
         <module>filebox-gateway-service</module>

@@ -54,7 +54,7 @@ jwt:
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka-service8002:8002/eureka/, http://eureka-service8001:8001/eureka/
+      defaultZone: http://eureka.xufilebox.top:8002/eureka/,http://eureka.xufilebox.top:8001/eureka/
 server:
   port: 8021
 

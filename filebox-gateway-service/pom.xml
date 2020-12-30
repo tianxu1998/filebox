@@ -28,6 +28,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>top.xufilebox</groupId>
             <artifactId>filebox-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
@@ -67,4 +72,13 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <finalName>gateway-service</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
