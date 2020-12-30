@@ -1,4 +1,5 @@
 spring:
+
   redis:
     database: 0
     pool:
@@ -52,6 +53,11 @@ jwt:
   expiration: 86400
   tokenHead: Bearer
 eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${spring.application.instance_id:${server.port}}
+    hostname: eureka.xufilebox.top
+    ip-address: eureka.xufilebox.top
   client:
     service-url:
       defaultZone: http://eureka.xufilebox.top:8002/eureka/,http://eureka.xufilebox.top:8001/eureka/
