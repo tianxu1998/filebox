@@ -39,7 +39,6 @@ spring:
 mybatis-plus:
   mapper-locations: classpath*:top/xufilebox/common/mybatis/mapper/*Mapper.xml
 
-
 jwt:
   secret: filebox
   expiration: 86400
@@ -48,12 +47,16 @@ eureka:
   instance:
     prefer-ip-address: true
     instance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${spring.application.instance_id:${server.port}}
-    hostname: 112.126.102.38
-    ip-address: 112.126.102.38
+    hostname: localhost
+    ip-address: 127.0.0.1
   client:
     service-url:
-      defaultZone: http://eureka.xufilebox.top:8002/eureka/,http://eureka.xufilebox.top:8001/eureka/
+      defaultZone: http://localhost:8001/eureka
+
 
 # 白名单， 用,分隔， 中间不可加空格
 filebox:
   allowPaths: /auth/**
+logging:
+  level:
+    root: info
