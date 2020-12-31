@@ -10,6 +10,7 @@
         <module>filebox-user-service</module>
         <module>filebox-auth-service</module>
         <module>filebox-gateway-service</module>
+        <module>filebox-file-service</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

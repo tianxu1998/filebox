@@ -39,12 +39,12 @@ class FileboxEurekaService8001ApplicationTests {
 
     @Test
     void redisTest() throws InterruptedException {
-        while (true) {
-            Thread.sleep(1000);
-            redisTemplateProxy.setEX("tianxu", "xxx", 1000 * 60 * 2);
-            System.out.println(redisTemplateProxy.isExpired("tianxu"));
-            System.out.println(redisTemplateProxy.getExpired("tianxu"));
-        }
+//        while (true) {
+//            Thread.sleep(1000);
+//            redisTemplateProxy.setEX("tianxu", "xxx", 1000 * 60 * 2);
+//            System.out.println(redisTemplateProxy.isExpired("tianxu"));
+//            System.out.println(redisTemplateProxy.getExpired("tianxu"));
+//        }
     }
 
 
