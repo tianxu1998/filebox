@@ -19,8 +19,6 @@ import reactor.core.publisher.Flux;
 @SpringBootApplication(scanBasePackages = "top.xufilebox.**")
 @EnableEurekaClient
 public class GatewayServiceApplication {
-    @Autowired
-    RouteLocator locator;
     public static void main(String[] args) {
         SpringApplication.run(GatewayServiceApplication.class, args);
     }

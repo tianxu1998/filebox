@@ -37,7 +37,7 @@ import java.util.Map;
  * @since 2020-12-18
  */
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
+public class AuthUserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
     @Autowired
     UserMapper userMapper;
     @Autowired
@@ -128,6 +128,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public Result<String> logout(String token) {
         return Result.failed();
+    }
+
+    @Override
+    public Result userExist(String userName) {
+        LambdaQueryWrapper<User> query = new LambdaQueryWrapper<>();
+        query.eq(User::getUserName, userName);
+        User user = userMapper.selectOne(query);
+        if (user == null) {
+            return Result.failed(ResultCode.USER_NOT_FOUND_ERROR, "此用户不存在");
+        }
+        return Result.success(ResultCode.SUCCESS, "此用户已经存在");
     }
 
     private User createDefaultUser(CreateDTO createDTO) {

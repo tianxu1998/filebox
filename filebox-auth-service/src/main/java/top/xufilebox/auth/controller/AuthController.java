@@ -1,18 +1,13 @@
 package top.xufilebox.auth.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import top.xufilebox.auth.service.impl.UserServiceImpl;
+import org.springframework.web.bind.annotation.*;
+import top.xufilebox.auth.service.impl.AuthUserServiceImpl;
 import top.xufilebox.auth.util.VerifyUtil;
 import top.xufilebox.common.dto.CreateDTO;
 import top.xufilebox.common.dto.LoginDTO;
-import top.xufilebox.common.mybatis.entity.User;
 import top.xufilebox.common.redis.RedisTemplateProxy;
 import top.xufilebox.common.result.Result;
 import top.xufilebox.common.result.ResultCode;
@@ -33,9 +28,14 @@ import java.util.UUID;
 @RequestMapping("/auth")
 public class AuthController {
     @Autowired
-    UserServiceImpl userService;
+    AuthUserServiceImpl userService;
     @Autowired
     RedisTemplateProxy redisTemplateProxy;
+
+    @RequestMapping("/userExist/{userName}")
+    public Result userExist(@PathVariable("userName") String userName) {
+        return userService.userExist(userName);
+    }
 
     @RequestMapping("/getVerifyCode")
     public Result getVerifyCode() throws Exception {
