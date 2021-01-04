@@ -66,13 +66,13 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
   application:
     name: user-service
-#  cloud:
-#    config:
-#      profile: dev
-#      label: master
-#      discovery:
-#        enabled: true
-#        service-id: config-service
+  cloud:
+    config:
+      profile: dev
+      label: master
+      discovery:
+        enabled: true
+        service-id: config-service
 #mapper plus
 mybatis-plus:
   mapper-locations: classpath*:top/xufilebox/common/mybatis/mapper/*Mapper.xml
@@ -81,3 +81,13 @@ mybatis-plus:
 jwt:
   secret: filebox
   expiration: 86400
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${spring.application.instance_id:${server.port}}
+    hostname: 47.94.234.25
+    ip-address: 47.94.234.25
+  client:
+    service-url:
+      defaultZone: http://eureka.xufilebox.top:8002/eureka/,http://eureka.xufilebox.top:8001/eureka/
