@@ -13,7 +13,7 @@ spring:
           uri: lb://auth-service
           predicates:
             - Path=/auth/**
-        - id: user=service
+        - id: user-service
           uri: lb://user-service
           predicates:
             - Path=/user/**
@@ -60,4 +60,4 @@ eureka:
 
 # 白名单， 用,分隔， 中间不可加空格
 filebox:
-  allowPaths: /auth/**,/user/**
+  allowPaths: /auth/**

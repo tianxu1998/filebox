@@ -29,19 +29,14 @@ public class GateWayBeanConfig {
 
 
     @Bean
-    public WebFilter corsFilter() {
-        return (exchange, chain) -> {
-            ServerHttpRequest request = exchange.getRequest();
-            if (!CorsUtils.isCorsRequest(request)) {
-                return chain.filter(exchange);
-            }
-            ServerHttpResponse response = exchange.getResponse();
-            HttpHeaders headers = response.getHeaders();
-            headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-            headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "POST,GET,OPTIONS,DELETE,PUT");
-            headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "content-type");
-            headers.add(HttpHeaders.ACCESS_CONTROL_MAX_AGE, "3628800");
-            return chain.filter(exchange);
-        };
+    public CorsWebFilter corsFilter() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedMethod("*");
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource(new PathPatternParser());
+        source.registerCorsConfiguration("/**", config);
+        return new CorsWebFilter(source);
     }
 }

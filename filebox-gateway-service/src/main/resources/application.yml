@@ -13,6 +13,10 @@ spring:
           uri: lb://auth-service
           predicates:
             - Path=/auth/**
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**
   redis:
     database: 0
     pool:
