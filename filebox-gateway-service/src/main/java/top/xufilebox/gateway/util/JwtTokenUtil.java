@@ -33,14 +33,10 @@ public class JwtTokenUtil {
 
     public Claims getClaimsFromToken(String token) {
         Claims claims = null;
-        try {
             claims = Jwts.parser()
                     .setSigningKey(secret)
                     .parseClaimsJws(token)
                     .getBody();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         return claims;
     }
 

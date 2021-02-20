@@ -14,7 +14,7 @@ spring:
           predicates:
             - Path=/auth/**
         - id: user-service
-          uri: lb://user-service
+          uri: http://localhost:8041
           predicates:
             - Path=/user/**
   redis:

@@ -10,6 +10,8 @@ import top.xufilebox.common.dto.UserInfoDTO;
 import top.xufilebox.common.result.Result;
 import top.xufilebox.user.service.impl.UserServiceImpl;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @description:
  * @author: alextian
@@ -27,7 +29,7 @@ public class UserController {
     }
 
     @RequestMapping("/updateUserInfo")
-    public Result updateUserInfo(@RequestHeader("userId") String userId, @RequestBody UserInfoDTO userInfo) {
+    public Result updateUserInfo(HttpServletRequest request, @RequestHeader("userId") String userId, @RequestBody UserInfoDTO userInfo) {
         return userService.update(userId, userInfo);
     }
 
