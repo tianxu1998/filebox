@@ -1,6 +1,7 @@
 package top.xufilebox.common.mybatis.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author tianxu
- * @since 2020-12-18
+ * @since 2021-02-07
  */
 @TableName("u_role")
 @ApiModel(value="Role对象", description="")
@@ -30,6 +31,7 @@ public class Role implements Serializable {
     private String roleName;
 
     @ApiModelProperty(value = "是否禁用 1表示禁用， 0表示未禁用")
+    @TableField("`disable`")
     private Integer disable;
 
     @ApiModelProperty(value = "修改时间")

@@ -1,6 +1,7 @@
 package top.xufilebox.common.mybatis.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author tianxu
- * @since 2020-12-18
+ * @since 2021-02-07
  */
 @TableName("f_share")
 @ApiModel(value="Share对象", description="")
@@ -33,12 +34,14 @@ public class Share implements Serializable {
     private Integer fileId;
 
     @ApiModelProperty(value = "分享文件的hash")
+    @TableField("`hash`")
     private String hash;
 
     @ApiModelProperty(value = "文件分享url")
     private String shareUrl;
 
     @ApiModelProperty(value = "是否禁用 1表示禁用， 0表示未禁用分享")
+    @TableField("`disable`")
     private Integer disable;
 
     @ApiModelProperty(value = "有效时间（以毫秒为单位）")

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author tianxu
- * @since 2020-12-18
+ * @since 2021-02-07
  */
 @TableName("u_user_role")
 @ApiModel(value="UserRole对象", description="")

@@ -4,6 +4,13 @@ server:
 spring:
   application:
     name: file-service
+  cloud:
+    config:
+      profile: dev
+      label: master
+      discovery:
+        enabled: true
+        service-id: config-service
   servlet:
     multipart:
       max-file-size: 1000MB
@@ -94,3 +101,17 @@ fdfs:
     max-idle-per-key: 10
     #每个key对应的连接池最小空闲连接数
     max_idle_per_key: 5
+
+  #mapper plus
+mybatis-plus:
+  mapper-locations: classpath*:top/xufilebox/common/mybatis/mapper/*Mapper.xml
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${spring.application.instance_id:${server.port}}
+    hostname: 47.94.170.107
+    ip-address: 47.94.170.107
+  client:
+    service-url:
+      defaultZone: http://eureka.xufilebox.top:8002/eureka/,http://eureka.xufilebox.top:8001/eureka/

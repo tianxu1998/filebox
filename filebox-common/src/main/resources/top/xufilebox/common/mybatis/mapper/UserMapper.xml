@@ -28,4 +28,11 @@
         from u_user
         where user_id = #{userId};
     </select>
+
+    <select id="findTimeline" parameterType="java.lang.String"
+            resultType="java.util.Map">
+        select update_time,create_time
+        from u_user
+        where user_id = #{userId};
+    </select>
 </mapper>

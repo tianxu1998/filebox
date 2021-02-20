@@ -1,6 +1,7 @@
 package top.xufilebox.common.mybatis.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author tianxu
- * @since 2020-12-18
+ * @since 2021-02-07
  */
 @TableName("f_file")
 @ApiModel(value="File对象", description="")
@@ -31,22 +32,29 @@ public class File implements Serializable {
     private String fileName;
 
     @ApiModelProperty(value = "文件来源:例如：来自张三的分享，本地上传等")
+    @TableField("`from`")
     private String from;
 
     @ApiModelProperty(value = "所属文件夹的id")
     private Integer parentDirId;
 
     @ApiModelProperty(value = "文件大小")
-    private Integer size;
+    private Long size;
 
     @ApiModelProperty(value = "文件hash值")
+    @TableField("`hash`")
     private String hash;
 
-    @ApiModelProperty(value = "文件所属组")
-    private String group;
+    @ApiModelProperty(value = "分块数量")
+    private Integer blockNumber;
 
-    @ApiModelProperty(value = "在文件集群上的路径")
-    private String dfsPath;
+    @ApiModelProperty(value = "是否逻辑删除：1表示是  0表示否")
+    @TableField("`delete`")
+    private Integer delete;
+
+    @ApiModelProperty(value = "文件状态 ：0、未上传完成  1、上传完成 ")
+    @TableField("`status`")
+    private Integer status;
 
     @ApiModelProperty(value = "修改时间")
     private LocalDateTime updateTime;
@@ -59,6 +67,18 @@ public class File implements Serializable {
 
     @ApiModelProperty(value = "修改者user_id")
     private Integer updateBy;
+
+    public Integer getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Integer owner) {
+        this.owner = owner;
+    }
+
+    @ApiModelProperty(value = "拥有者user_id")
+    @TableField("`owner`")
+    private Integer owner;
 
 
     public Integer getFileId() {
@@ -93,11 +113,11 @@ public class File implements Serializable {
         this.parentDirId = parentDirId;
     }
 
-    public Integer getSize() {
+    public Long getSize() {
         return size;
     }
 
-    public void setSize(Integer size) {
+    public void setSize(Long size) {
         this.size = size;
     }
 
@@ -109,20 +129,28 @@ public class File implements Serializable {
         this.hash = hash;
     }
 
-    public String getGroup() {
-        return group;
+    public Integer getBlockNumber() {
+        return blockNumber;
     }
 
-    public void setGroup(String group) {
-        this.group = group;
+    public void setBlockNumber(Integer blockNumber) {
+        this.blockNumber = blockNumber;
     }
 
-    public String getDfsPath() {
-        return dfsPath;
+    public Integer getDelete() {
+        return delete;
     }
 
-    public void setDfsPath(String dfsPath) {
-        this.dfsPath = dfsPath;
+    public void setDelete(Integer delete) {
+        this.delete = delete;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public LocalDateTime getUpdateTime() {
@@ -166,8 +194,9 @@ public class File implements Serializable {
         ", parentDirId=" + parentDirId +
         ", size=" + size +
         ", hash=" + hash +
-        ", group=" + group +
-        ", dfsPath=" + dfsPath +
+        ", blockNumber=" + blockNumber +
+        ", delete=" + delete +
+        ", status=" + status +
         ", updateTime=" + updateTime +
         ", createTime=" + createTime +
         ", createBy=" + createBy +

@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author tianxu
- * @since 2020-12-18
+ * @since 2021-02-07
  */
 @TableName("u_user")
 @ApiModel(value="User对象", description="")
@@ -32,9 +32,11 @@ public class User implements Serializable {
     private String userName;
 
     @ApiModelProperty(value = "经过加密后的用户密码")
+    @TableField("`password`")
     private String password;
 
     @ApiModelProperty(value = "真实姓名")
+    @TableField("`name`")
     private String name;
 
     @ApiModelProperty(value = "用户昵称")
@@ -50,10 +52,10 @@ public class User implements Serializable {
     private Integer rootDirId;
 
     @ApiModelProperty(value = "用户总空间")
-    private Integer capacity;
+    private Long capacity;
 
     @ApiModelProperty(value = "已使用空间")
-    private Integer usedCapacity;
+    private Long usedCapacity;
 
     @ApiModelProperty(value = "是否禁用 1表示禁用  0表示未禁用")
     @TableField("`disable`")
@@ -146,19 +148,19 @@ public class User implements Serializable {
         this.rootDirId = rootDirId;
     }
 
-    public Integer getCapacity() {
+    public Long getCapacity() {
         return capacity;
     }
 
-    public void setCapacity(Integer capacity) {
+    public void setCapacity(Long capacity) {
         this.capacity = capacity;
     }
 
-    public Integer getUsedCapacity() {
+    public Long getUsedCapacity() {
         return usedCapacity;
     }
 
-    public void setUsedCapacity(Integer usedCapacity) {
+    public void setUsedCapacity(Long usedCapacity) {
         this.usedCapacity = usedCapacity;
     }
 
@@ -231,6 +233,7 @@ public class User implements Serializable {
         return "User{" +
         "userId=" + userId +
         ", userName=" + userName +
+        ", password=" + password +
         ", name=" + name +
         ", nickName=" + nickName +
         ", phone=" + phone +

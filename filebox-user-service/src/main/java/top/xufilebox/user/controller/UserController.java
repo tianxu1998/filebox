@@ -35,4 +35,9 @@ public class UserController {
     public Result updatePassword(@RequestHeader("userId") String userId, @RequestBody UpdatePasswordDTO updatePasswordDTO) {
         return userService.updatePassword(userId, updatePasswordDTO);
     }
+
+    @RequestMapping("/findTimeline")
+    public Result findTimeline(@RequestHeader("userId") String userId) {
+        return userService.findTimeline(userId);
+    }
 }

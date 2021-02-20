@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Param;
 import top.xufilebox.common.dto.UserInfoDTO;
 import top.xufilebox.common.mybatis.entity.User;
 
+import java.util.Map;
+
 /**
  * <p>
  *  Mapper 接口
@@ -23,4 +25,6 @@ public interface UserMapper extends BaseMapper<User> {
     UserInfoDTO findUserInfo(@Param("userName") String userName);
 
     String findPasswordById(@Param("userId") String userId);
+
+    Map<String, String> findTimeline(String userId);
 }

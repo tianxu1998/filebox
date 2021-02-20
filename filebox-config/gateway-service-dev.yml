@@ -17,6 +17,10 @@ spring:
           uri: lb://user-service
           predicates:
             - Path=/user/**
+        - id: file-service
+          uri: lb://file-service
+          predicates:
+            - Path=/file/**
   redis:
     database: 0
     pool:
@@ -27,17 +31,17 @@ spring:
   redis-master:
     host: master.redis.xufilebox.top
     port: 6379
-    password:
+    password: 7XQnwjQvvaXWbjYYhaKy
     testOnBorrow: true
   redis-slave1:
     host: slave1.redis.xufilebox.top
     port: 6379
-    password:
+    password: 7XQnwjQvvaXWbjYYhaKy
     testOnBorrow: true
   redis-slave2:
     host: slave2.redis.xufilebox.top
     port: 6379
-    password:
+    password: 7XQnwjQvvaXWbjYYhaKy
     testOnBorrow: true
 #mapper plus
 mybatis-plus:

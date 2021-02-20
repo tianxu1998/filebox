@@ -78,6 +78,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         user.setEmail(userInfo.getEmail());
         user.setUpdateTime(LocalDateTime.now());
         user.setUpdateBy(Integer.valueOf(userId));
+        user.setCompletedInformation(1);
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getUserId, Integer.valueOf(userId));
         userMapper.update(user, queryWrapper);
@@ -117,4 +118,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         userMapper.updateById(user);
         return Result.success(ResultCode.SUCCESS, "更新密码成功");
     }
+
+    public Result findTimeline(String userId) {
+        return Result.success(ResultCode.SUCCESS, userMapper.findTimeline(userId));
+    }
+
 }

@@ -11,17 +11,17 @@ spring:
   redis-master:
     host: master.redis.xufilebox.top
     port: 6379
-    password:
+    password: 7XQnwjQvvaXWbjYYhaKy
     testOnBorrow: true
   redis-slave1:
     host: slave1.redis.xufilebox.top
     port: 6379
-    password:
+    password: 7XQnwjQvvaXWbjYYhaKy
     testOnBorrow: true
   redis-slave2:
     host: slave2.redis.xufilebox.top
     port: 6379
-    password:
+    password: 7XQnwjQvvaXWbjYYhaKy
     testOnBorrow: true
   datasource:
     dynamic:

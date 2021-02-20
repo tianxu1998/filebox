@@ -1,7 +1,7 @@
 package top.xufilebox.common.mybatis.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import top.xufilebox.common.mybatis.entity.File;
+import top.xufilebox.common.mybatis.entity.Block;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import top.xufilebox.common.mybatis.entity.File;
  * @author tianxu
  * @since 2021-01-28
  */
-public interface IFileService extends IService<File> {
+public interface IBlockService extends IService<Block> {
 
 }

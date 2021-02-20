@@ -1,7 +1,7 @@
 package top.xufilebox.common.mybatis.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import top.xufilebox.common.mybatis.entity.File;
 
 /**
@@ -10,9 +10,9 @@ import top.xufilebox.common.mybatis.entity.File;
  * </p>
  *
  * @author tianxu
- * @since 2020-12-18
+ * @since 2021-01-28
  */
-@Mapper
 public interface FileMapper extends BaseMapper<File> {
 
+    Integer findUserIdByFileId(@Param("fileId") Integer fileId);
 }

@@ -67,14 +67,15 @@ public class TokenFilter implements GlobalFilter, Ordered {
         Claims userInfo = null;
         try {
             userInfo = jwtTokenUtil.getClaimsFromToken(token);
+            if (userInfo.getExpiration().before(new Date())) {
+                response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                return getVoidMono(response, ResultCode.USER_TOKEN_EXPIRED);
+            }
         } catch (Exception e) {
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return getVoidMono(response, ResultCode.USER_TOKEN_ERROR);
         }
-        if (userInfo.getExpiration().before(new Date())) {
-            response.setStatusCode(HttpStatus.UNAUTHORIZED);
-            return getVoidMono(response, ResultCode.USER_TOKEN_EXPIRED);
-        }
+
         String userName = String.valueOf(userInfo.get("userName"));
         String userId = String.valueOf(userInfo.get("userId"));
         String role = String.valueOf(userInfo.get("role"));
