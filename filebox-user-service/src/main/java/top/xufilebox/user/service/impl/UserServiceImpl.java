@@ -119,8 +119,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return Result.success(ResultCode.SUCCESS, "更新密码成功");
     }
 
+    @ReadOnly
     public Result findTimeline(String userId) {
         return Result.success(ResultCode.SUCCESS, userMapper.findTimeline(userId));
     }
 
+    @ReadOnly
+    public Result<Integer> getRootDirId(String userId) {
+        userMapper.getRootDirId(userId);
+        return Result.success();
+    }
 }

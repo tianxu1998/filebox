@@ -2,7 +2,10 @@ package top.xufilebox.common.mybatis.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
+import top.xufilebox.common.dto.FileInfoDTO;
 import top.xufilebox.common.mybatis.entity.File;
+
+import java.util.List;
 
 /**
  * <p>
@@ -15,4 +18,8 @@ import top.xufilebox.common.mybatis.entity.File;
 public interface FileMapper extends BaseMapper<File> {
 
     Integer findUserIdByFileId(@Param("fileId") Integer fileId);
+
+    List<FileInfoDTO> listRootDirFile(@Param("userId") String userId);
+
+    List<FileInfoDTO> listDirFile(@Param("dirId") Integer dirId);
 }

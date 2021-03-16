@@ -42,4 +42,9 @@ public class UserController {
     public Result findTimeline(@RequestHeader("userId") String userId) {
         return userService.findTimeline(userId);
     }
+
+    @RequestMapping("/rootDirId")
+    public Result<Integer> getRootDirId(@RequestHeader("userId") String userId) {
+        return userService.getRootDirId(userId);
+    }
 }

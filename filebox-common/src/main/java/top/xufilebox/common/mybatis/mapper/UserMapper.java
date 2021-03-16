@@ -26,5 +26,7 @@ public interface UserMapper extends BaseMapper<User> {
 
     String findPasswordById(@Param("userId") String userId);
 
-    Map<String, String> findTimeline(String userId);
+    Map<String, String> findTimeline(@Param("userId") String userId);
+
+    Integer getRootDirId(@Param("userId") String userId);
 }

@@ -94,3 +94,8 @@ fdfs:
     max-idle-per-key: 10
     #每个key对应的连接池最小空闲连接数
     max_idle_per_key: 5
+
+url:
+  encoder:
+    key:
+      xufilebox

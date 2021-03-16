@@ -1,7 +1,12 @@
 package top.xufilebox.file.service.impl;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.github.tobato.fastdfs.service.TrackerClient;
@@ -10,26 +15,31 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import top.xufilebox.common.annotation.ReadOnly;
-import top.xufilebox.common.dto.FileHashInfoDTO;
-import top.xufilebox.common.dto.UploadFileDTO;
+import top.xufilebox.common.dto.*;
 import top.xufilebox.common.mybatis.entity.Block;
 import top.xufilebox.common.mybatis.entity.Directory;
 import top.xufilebox.common.mybatis.entity.File;
-import top.xufilebox.common.mybatis.mapper.BlockMapper;
-import top.xufilebox.common.mybatis.mapper.DirectoryMapper;
-import top.xufilebox.common.mybatis.mapper.FileMapper;
+import top.xufilebox.common.mybatis.entity.Share;
+import top.xufilebox.common.mybatis.mapper.*;
 import top.xufilebox.common.mybatis.service.IFileService;
 import top.xufilebox.common.result.Result;
 import top.xufilebox.common.result.ResultCode;
 import top.xufilebox.common.util.Constant;
+import top.xufilebox.common.util.LogicalValue;
 import top.xufilebox.file.entity.Chunk;
+import top.xufilebox.file.util.AESUtil;
 import top.xufilebox.file.util.FastDFSUtil;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @description:
@@ -42,6 +52,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
     FileMapper fileMapper;
     @Autowired
     DirectoryMapper directoryMapper;
+    @Autowired
+    UserMapper userMapper;
 
     @Autowired
     TrackerClient trackerClient;
@@ -51,12 +63,18 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
     FastDFSUtil fastDFSUtil;
     @Autowired
     BlockMapper blockMapper;
+    @Autowired
+    AESUtil aesUtil;
+    @Autowired
+    ShareMapper shareMapper;
+
+
 
 
     @Transactional
     public Result<File> createFile(UploadFileDTO uploadFileDTO, String userId) {
         // 如果前端没有传来父文件夹的id 则默认上传到家目录
-        if (uploadFileDTO.getParentDirId() == null || uploadFileDTO.getParentDirId() == 0) {
+        if (uploadFileDTO.getParentDirId() == null || uploadFileDTO.getParentDirId() == -1) {
             LambdaQueryWrapper<Directory> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper
                     .eq(Directory::getOwner, userId)
@@ -211,5 +229,96 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
                     return "下载分块完成";
                 });
         return Result.success(ResultCode.SUCCESS, res);
+    }
+
+    public Result<List<FileInfoDTO>> listRootDirFile(String userId) {
+        List<FileInfoDTO> fileInfoDTOS = fileMapper.listRootDirFile(userId);
+        fileInfoDTOS.forEach(it -> {
+            if (it.getIsDir() == LogicalValue.FALSE) {
+                it.setSuffix(it.getFileName().substring(it.getFileName().lastIndexOf(".") + 1));
+            }
+        });
+        return Result.success(ResultCode.SUCCESS, fileInfoDTOS);
+    }
+
+    @ReadOnly
+    public Result<Integer> getRootDirId(String userId) {
+        return Result.success(ResultCode.SUCCESS, userMapper.getRootDirId(userId));
+    }
+
+    public Result<FileInfoDTO> createNewDir(String userId, CreateNewDirDTO createNewDirDTO) {
+        Directory newDir = this.createNewDirFromDTO(userId, createNewDirDTO);
+        directoryMapper.insert(newDir);
+        FileInfoDTO fileInfoDTO = new FileInfoDTO();
+        fileInfoDTO.setFileId(newDir.getDirId());
+        fileInfoDTO.setFileName(newDir.getDirName());
+        fileInfoDTO.setCreateTime(newDir.getCreateTime());
+        fileInfoDTO.setUpdateTime(newDir.getUpdateTime());
+        fileInfoDTO.setBlockNumber(0);
+        fileInfoDTO.setHash("--");
+        fileInfoDTO.setFrom("本地创建");
+        fileInfoDTO.setIsDir(1);
+        fileInfoDTO.setSize(0L);
+        return Result.success(ResultCode.SUCCESS, fileInfoDTO);
+    }
+
+    private Directory createNewDirFromDTO(String userId, CreateNewDirDTO createNewDirDTO) {
+        Directory dir = new Directory();
+        dir.setDirName(Constant.DEFAULT_DIR_NAME);
+        dir.setPath(createNewDirDTO.getCurPath() + "/" + Constant.DEFAULT_DIR_NAME);
+        dir.setParentDirId(createNewDirDTO.getCurDirId());
+        dir.setCreateTime(LocalDateTime.now());
+        dir.setUpdateTime(LocalDateTime.now());
+        dir.setOwner(Integer.valueOf(userId));
+        dir.setUpdateBy(Integer.valueOf(userId));
+        dir.setCreateBy(Integer.valueOf(userId));
+        return dir;
+    }
+
+    @ReadOnly
+    public Result<List<FileInfoDTO>> listDirFile(String userId, Integer dirId) {
+        Directory directory = directoryMapper.selectById(dirId);
+        if (directory.getOwner() != Integer.valueOf(userId)) {
+            return Result.failed(ResultCode.NOT_FILE_OWNER);
+        }
+        List<FileInfoDTO> files = fileMapper.listDirFile(dirId);
+        return Result.success(ResultCode.SUCCESS, files);
+    }
+
+    public Result<String> generateUrl(String userId, GenerateUrlDTO generateUrlDTO) throws JsonProcessingException {
+        List<Share> shareList = createShareFromDTO(userId, generateUrlDTO);
+        shareMapper.insertList(shareList);
+        String shareUrl = shareList.get(0).getShareUrl();
+        return Result.success(ResultCode.SUCCESS, shareUrl);
+    }
+
+    /**
+     * 根据generateUrlDTO生成share_url
+     * @param generateUrlDTO
+     * @return 加密后的share_url
+     */
+    private String generateUrl(GenerateUrlDTO generateUrlDTO) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonStr = objectMapper.writeValueAsString(generateUrlDTO);
+        String ret = aesUtil.ecodes(jsonStr);
+        return ret;
+    }
+
+    private List<Share> createShareFromDTO(String userId, GenerateUrlDTO generateUrlDTO) throws JsonProcessingException {
+        String url = generateUrl(generateUrlDTO);
+        List<Integer> fileIds = generateUrlDTO.getFileIds();
+        List<Share> shareList = fileIds.stream().map(fileId -> {
+            Share share = new Share();
+            share.setCreateBy(Integer.valueOf(userId));
+            share.setCreateTime(LocalDateTime.now());
+            share.setShareUrl(url);
+            share.setFileId(fileId);
+            share.setEffectiveTime(generateUrlDTO.getTerm());
+            share.setDisable(LogicalValue.FALSE);
+            share.setUpdateBy(Integer.valueOf(userId));
+            share.setUpdateTime(LocalDateTime.now());
+            return share;
+        }).collect(Collectors.toList());
+        return shareList;
     }
 }

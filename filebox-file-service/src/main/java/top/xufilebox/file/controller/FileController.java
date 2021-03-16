@@ -2,6 +2,7 @@ package top.xufilebox.file.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.tobato.fastdfs.domain.fdfs.FileInfo;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.github.tobato.fastdfs.service.TrackerClient;
@@ -9,8 +10,7 @@ import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import top.xufilebox.common.dto.FileHashInfoDTO;
-import top.xufilebox.common.dto.UploadFileDTO;
+import top.xufilebox.common.dto.*;
 import top.xufilebox.common.mybatis.entity.Block;
 import top.xufilebox.common.mybatis.entity.File;
 import top.xufilebox.common.mybatis.mapper.BlockMapper;
@@ -50,23 +50,13 @@ public class FileController {
         return fileService.uploadFileSuccess(md5, userId);
     }
 
-//    @RequestMapping(value = "/uploadFile")
-//    public Result upload(HttpServletRequest request,Chunk chunk, @RequestHeader("userId") String userId) throws IOException {
-//        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-//        if (!isMultipart) return Result.failed(ResultCode.NOT_MULTIPARTCONTENT);
-//        return fileService.uploadFile(chunk, userId);
-//    }
     @PostMapping(value = "/uploadFile")
     public Result upload(HttpServletRequest request,Chunk chunk, @RequestHeader("userId") String userId) throws IOException {
-//        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-//        if (!isMultipart) return Result.failed(ResultCode.NOT_MULTIPARTCONTENT);
         return fileService.uploadFile(chunk, userId);
     }
 
     @GetMapping(value = "/uploadFile")
     public Result uploadTest(HttpServletRequest request,Chunk chunk, @RequestHeader("userId") String userId) throws IOException {
-//        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-//        if (!isMultipart) return Result.failed(ResultCode.NOT_MULTIPARTCONTENT);
         return fileService.uploadFileTest(chunk, userId);
     }
 
@@ -79,6 +69,31 @@ public class FileController {
     @RequestMapping("/download/{blockName}")
     public Result download(HttpServletResponse response, @PathVariable("blockName") String blockName) throws IOException {
         return fileService.download(response, blockName);
+    }
+
+    @RequestMapping("/list/home")
+    public Result<List<FileInfoDTO>> listRootDirFile(@RequestHeader("userId") String userId) {
+        return fileService.listRootDirFile(userId);
+    }
+
+    @RequestMapping("/rootDirId")
+    public Result<Integer> getRootDirId(@RequestHeader("userId") String userId) {
+        return fileService.getRootDirId(userId);
+    }
+
+    @RequestMapping("/createNewDir")
+    public Result<FileInfoDTO> createNewDir(@RequestBody CreateNewDirDTO createNewDirDTO, @RequestHeader("userId") String userId) {
+        return fileService.createNewDir(userId, createNewDirDTO);
+    }
+
+    @RequestMapping("/list/{dirId}")
+    public Result<List<FileInfoDTO>> listDirFile(@RequestHeader("userId") String userId, @PathVariable("dirId") Integer dirId) {
+        return fileService.listDirFile(userId, dirId);
+    }
+
+    @RequestMapping("/share/generateUrl")
+    public Result<String> generateUrl(@RequestHeader("userId") String userId, @RequestBody GenerateUrlDTO generateUrlDTO) throws JsonProcessingException {
+        return fileService.generateUrl(userId, generateUrlDTO);
     }
 
     @Autowired

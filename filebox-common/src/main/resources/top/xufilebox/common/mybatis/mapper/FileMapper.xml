@@ -1,7 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.xufilebox.common.mybatis.mapper.FileMapper">
+    <resultMap id="fileInfoMap" type="top.xufilebox.common.dto.FileInfoDTO">
+        <id property="fileId" column="file_id" />
+        <result property="fileName" column="file_name" />
+        <result property="from" column="from" />
+        <result property="size" column="size" />
+        <result property="hash" column="hash" />
+        <result property="blockNumber" column="block_number" />
+        <result property="updateTime" column="update_time" />
+        <result property="createTime" column="create_time" />
+    </resultMap>
+    <sql id="fileInfoSql">
+        `file_id`,`file_name`,`from`,`size`,`hash`,`block_number`,`update_time`,`create_time`
+    </sql>
+
+    <select id="listRootDirFile" parameterType="java.lang.String" resultMap="fileInfoMap">
+        select `dir_id` as file_id, `dir_name` as file_name, "本地创建" as `from`, "0" as `size`, "--" as `hash`, "0" as `block_number`, `update_time`, `create_time`, "1" as `is_dir` from f_directory where parent_dir_id = (select root_dir_id from u_user where user_id = #{userId})
+        UNION
+        select `file_id`,`file_name`,`from`,`size`,`hash`,`block_number`,`update_time`,`create_time`, "0" as `is_dir` from f_file where status = 1 and parent_dir_id = (select root_dir_id from u_user where user_id = #{userId})
+    </select>
+
     <select id="findUserIdByFileId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
         select `owner` from f_file where file_id = #{fileId};
     </select>
+
+    <select id="listDirFile" parameterType="java.lang.Integer" resultMap="fileInfoMap">
+        select `dir_id` as file_id, `dir_name` as file_name, "本地创建" as `from`, "0" as `size`, "--" as `hash`, "0" as `block_number`, `update_time`, `create_time`, "1" as `is_dir` from f_directory where parent_dir_id = #{dirId}
+        UNION
+        select `file_id`,`file_name`,`from`,`size`,`hash`,`block_number`,`update_time`,`create_time`, "0" as `is_dir` from f_file where status = 1 and parent_dir_id = #{dirId}
+    </select>
+
 </mapper>

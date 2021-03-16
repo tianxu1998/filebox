@@ -15,9 +15,5 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class FileApplication {
     public static void main(String[] args) {
         SpringApplication.run(FileApplication.class, args);
-//        com.github.tobato.fastdfs.service.FastFileStorageClient storageClient;
-////        storageClient.uploadFile()
-//        com.github.tobato.fastdfs.service.TrackerClient trackerClient;
-//        trackerClient.
     }
 }

@@ -10,5 +10,5 @@ public class Constant {
     public static final int DEFAULT_PARENT_DIR_ID = -1;
     public static final int UPLOAD_COMPLETED = 1;
     public static final int UPLOAD_UNCOMPLETED = 0;
-
+    public static final String DEFAULT_DIR_NAME = "新建文件夹";
 }

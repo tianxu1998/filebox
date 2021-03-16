@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import top.xufilebox.common.mybatis.entity.Share;
 
+import java.util.List;
+
 /**
  * <p>
  *  Mapper 接口
@@ -15,4 +17,5 @@ import top.xufilebox.common.mybatis.entity.Share;
 @Mapper
 public interface ShareMapper extends BaseMapper<Share> {
 
+    void insertList(List<Share> shareList);
 }

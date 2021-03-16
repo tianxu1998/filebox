@@ -68,6 +68,10 @@ public class File implements Serializable {
     @ApiModelProperty(value = "修改者user_id")
     private Integer updateBy;
 
+    @ApiModelProperty(value = "拥有者user_id")
+    @TableField("`owner`")
+    private Integer owner;
+
     public Integer getOwner() {
         return owner;
     }
@@ -75,11 +79,6 @@ public class File implements Serializable {
     public void setOwner(Integer owner) {
         this.owner = owner;
     }
-
-    @ApiModelProperty(value = "拥有者user_id")
-    @TableField("`owner`")
-    private Integer owner;
-
 
     public Integer getFileId() {
         return fileId;

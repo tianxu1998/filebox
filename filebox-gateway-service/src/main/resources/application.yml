@@ -17,6 +17,10 @@ spring:
           uri: http://localhost:8041
           predicates:
             - Path=/user/**
+        - id: file-service
+          uri: http://localhost:8181
+          predicates:
+            - Path=/file/**
   redis:
     database: 0
     pool:

@@ -35,4 +35,11 @@
         from u_user
         where user_id = #{userId};
     </select>
+
+    <select id="getRootDirId" parameterType="java.lang.String"
+            resultType="java.lang.Integer">
+        select root_dir_id
+        from u_user
+        where user_id = #{userId};
+    </select>
 </mapper>
