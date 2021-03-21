@@ -82,6 +82,7 @@ public class AuthUserServiceImpl extends ServiceImpl<UserMapper, User> implement
         claims.put("nickName", user.getNickName());
         String token = jwtTokenUtil.generateToken(claims);
         data.put("token", token);
+        redisTemplateProxy.setEX(token, user.getUserName(), jwtTokenUtil.getDefaultExpiration());
         return Result.success(ResultCode.SUCCESS, data);
     }
 
@@ -114,6 +115,7 @@ public class AuthUserServiceImpl extends ServiceImpl<UserMapper, User> implement
         claims.put("nickName", user.getNickName());
         String token = jwtTokenUtil.generateToken(claims);
         data.put("token", token);
+        redisTemplateProxy.setEX(token, user.getUserName(), jwtTokenUtil.getDefaultExpiration());
         return Result.success(ResultCode.SUCCESS, data);
     }
 
@@ -127,7 +129,8 @@ public class AuthUserServiceImpl extends ServiceImpl<UserMapper, User> implement
 
     @Override
     public Result<String> logout(String token) {
-        return Result.failed();
+        redisTemplateProxy.delete(token);
+        return Result.success();
     }
 
     @Override

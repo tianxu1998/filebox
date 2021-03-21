@@ -51,17 +51,17 @@ spring:
         master:
           url: jdbc:mysql://master.db.xufilebox.top:3306/filebox?useUnicode=true&characterEncoding=utf-8&useSSL=true
           username: root
-          password: rootpassword
+          password: 3295286
           driver-class-name: com.mysql.cj.jdbc.Driver
         slave_1:
           url: jdbc:mysql://slave1.db.xufilebox.top:3306/filebox?useUnicode=true&characterEncoding=utf-8&useSSL=true
           username: root
-          password: rootpassword
+          password: 3295286
           driver-class-name: com.mysql.cj.jdbc.Driver
         slave_2:
           url: jdbc:mysql://slave2.db.xufilebox.top:3306/filebox?useUnicode=true&characterEncoding=utf-8&useSSL=true
           username: root
-          password: rootpassword
+          password: 3295286
           driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
   application:
@@ -77,7 +77,7 @@ spring:
 mybatis-plus:
   mapper-locations: classpath*:top/xufilebox/common/mybatis/mapper/*Mapper.xml
 
-
+# jwt的设置， token过期时间是1天
 jwt:
   secret: filebox
   expiration: 86400

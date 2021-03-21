@@ -32,11 +32,21 @@ public class AuthController {
     @Autowired
     RedisTemplateProxy redisTemplateProxy;
 
+    /**
+     * 检查用户名是否存在
+     * @param userName
+     * @return
+     */
     @RequestMapping("/userExist/{userName}")
     public Result userExist(@PathVariable("userName") String userName) {
         return userService.userExist(userName);
     }
 
+    /**
+     * 生成验证码， 返回base64编码的图片
+     * @return
+     * @throws Exception
+     */
     @RequestMapping("/getVerifyCode")
     public Result getVerifyCode() throws Exception {
         Map map = new HashMap();
@@ -58,16 +68,31 @@ public class AuthController {
         return Result.success(ResultCode.SUCCESS, map);
     }
 
+    /**
+     * 登陆
+     * @param loginDTO
+     * @return
+     */
     @RequestMapping("/login")
     public Result login(@RequestBody LoginDTO loginDTO) {
         return userService.login(loginDTO);
     }
 
+    /**
+     * 注册用户
+     * @param createDTO
+     * @return
+     */
     @RequestMapping("/create")
     public Result create(@RequestBody CreateDTO createDTO) {
         return userService.create(createDTO);
     }
 
+    /**
+     * 登出
+     * @param token
+     * @return
+     */
     @RequestMapping("/logout")
     public Result logout(@RequestParam(name = "token") String token) {
         return userService.logout(token);

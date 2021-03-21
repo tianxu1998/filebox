@@ -1,6 +1,8 @@
 package top.xufilebox.common.dto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -9,9 +11,19 @@ import java.util.List;
  * @create: 2021-02-25 14:34
  **/
 public class GenerateUrlDTO implements Serializable {
+    public static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private Integer term; // 有效期, 以天为单位
     private List<Integer> fileIds; // 分享的文件id
     private String from; // 分享者用户名
+    private String shareTime = LocalDateTime.now().format(DTF); // 分享时间
+
+    public String getShareTime() {
+        return shareTime;
+    }
+
+    public void setShareTime(String shareTime) {
+        this.shareTime = shareTime;
+    }
 
     public Integer getTerm() {
         return term;
@@ -37,3 +49,7 @@ public class GenerateUrlDTO implements Serializable {
         this.from = from;
     }
 }
+
+
+
+

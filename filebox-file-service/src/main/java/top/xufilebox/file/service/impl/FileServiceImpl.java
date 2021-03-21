@@ -39,6 +39,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -292,6 +293,57 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         return Result.success(ResultCode.SUCCESS, shareUrl);
     }
 
+    @ReadOnly
+    public Result<List<FileInfoDTO>> decodeUrl(String url) {
+        Map<String, Object> dtoInfoMap = parseGenerateUrlDTO(url);
+        // 检查分享是否过期
+        if (expireCheck(dtoInfoMap.get("shareTime").toString(),
+                Integer.valueOf(dtoInfoMap.get("term").toString()))) {
+            return Result.failed(ResultCode.SHARE_EXPIRED);
+        }
+        List<FileInfoDTO> res = shareMapper.selectShareFileList((List<Integer>) dtoInfoMap.get("fileIds"));
+        res.forEach(item -> item.setFrom(dtoInfoMap.get("from").toString()));
+        return Result.success(ResultCode.SUCCESS, res);
+    }
+
+
+    /**
+     * 保存用户分享到我的文件
+     * @param userId
+     * @param request
+     * @return
+     */
+    public Result<String> transferSave(String userId, TransferSaveDTO request) {
+        Map<String, Object> dtoInfoMap = parseGenerateUrlDTO(request.getUrl());
+        // 检查分享是否过期
+        if (expireCheck(dtoInfoMap.get("shareTime").toString(),
+                Integer.valueOf(dtoInfoMap.get("term").toString()))) {
+            return Result.failed(ResultCode.SHARE_EXPIRED);
+        }
+        List<Integer> fileIds = (List<Integer>) dtoInfoMap.get("fileIds");
+        shareMapper.transferSave(fileIds.stream().map(fileId -> {
+            TransferSaveBaseDTO dto = new TransferSaveBaseDTO();
+            dto.setFileId(fileId);
+            dto.setFrom(dtoInfoMap.get("from").toString());
+            dto.setParentDirId(request.getToDirId());
+            dto.setUserId(Integer.valueOf(userId));
+            return dto;
+        }).collect(Collectors.toList()));
+        return Result.success();
+    }
+
+    /**
+     * 检查分享文件是否过期
+     * @param shareTime 分享时间
+     * @param term 有效期 以天为单位
+     * @return
+     */
+    private boolean expireCheck(String shareTime, Integer term) {
+        return LocalDateTime.parse(shareTime, GenerateUrlDTO.DTF)
+                .plusDays(term)
+                .isBefore(LocalDateTime.now());
+    }
+
     /**
      * 根据generateUrlDTO生成share_url
      * @param generateUrlDTO
@@ -304,6 +356,16 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         return ret;
     }
 
+    /**
+     * 根据加密后的url解析
+     * @param url
+     * @return
+     */
+    private Map<String, Object> parseGenerateUrlDTO(String url) {
+        String dtoJsonStr = aesUtil.dcodes(url);
+        return (Map<String, Object>) JSONUtils.parse(dtoJsonStr);
+    }
+
     private List<Share> createShareFromDTO(String userId, GenerateUrlDTO generateUrlDTO) throws JsonProcessingException {
         String url = generateUrl(generateUrlDTO);
         List<Integer> fileIds = generateUrlDTO.getFileIds();
@@ -313,6 +375,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
             share.setCreateTime(LocalDateTime.now());
             share.setShareUrl(url);
             share.setFileId(fileId);
+            share.setFromUserName(generateUrlDTO.getFrom());
             share.setEffectiveTime(generateUrlDTO.getTerm());
             share.setDisable(LogicalValue.FALSE);
             share.setUpdateBy(Integer.valueOf(userId));
@@ -321,4 +384,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         }).collect(Collectors.toList());
         return shareList;
     }
+
+
 }

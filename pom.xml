@@ -11,6 +11,7 @@
         <module>filebox-auth-service</module>
         <module>filebox-gateway-service</module>
         <module>filebox-file-service</module>
+        <module>filebox-mail-service</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

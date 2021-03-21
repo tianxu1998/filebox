@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.tobato.fastdfs.domain.fdfs.FileInfo;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.github.tobato.fastdfs.service.TrackerClient;
+import org.apache.commons.lang.StringUtils;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -91,10 +92,39 @@ public class FileController {
         return fileService.listDirFile(userId, dirId);
     }
 
+    /**
+     * 用户分享文件给他人
+     * @param userId
+     * @param generateUrlDTO
+     * @return
+     * @throws JsonProcessingException
+     */
     @RequestMapping("/share/generateUrl")
-    public Result<String> generateUrl(@RequestHeader("userId") String userId, @RequestBody GenerateUrlDTO generateUrlDTO) throws JsonProcessingException {
+    public Result<String> generateUrl(@RequestBody GenerateUrlDTO generateUrlDTO,
+                                      @RequestHeader("userId") String userId,
+                                      @RequestHeader("userName") String userName) throws JsonProcessingException {
+        generateUrlDTO.setFrom(userName);
         return fileService.generateUrl(userId, generateUrlDTO);
     }
+
+    /**
+     * 根据分享的链接获得文件列表
+     * @param userId
+     * @param url
+     * @return
+     */
+    @GetMapping("/share/decodeUrl/{url}")
+    public Result<List<FileInfoDTO>> decodeUrl(@RequestHeader("userId") String userId,
+                                               @PathVariable("url") String url) {
+        return fileService.decodeUrl(url);
+    }
+
+    @PostMapping("/share/transferSave")
+    public Result<String> transferSave(@RequestHeader("userId") String userId,
+                                       @RequestBody TransferSaveDTO request) {
+        return fileService.transferSave(userId, request);
+    }
+
 
     @Autowired
     TrackerClient trackerClient;

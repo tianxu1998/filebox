@@ -59,11 +59,17 @@ public class TokenFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
         String token = request.getHeaders().getFirst("Authorization");
+        // 检查是否为空
         if (StringUtils.isEmpty(token)) {
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return getVoidMono(response, ResultCode.USER_EMPTY_TOKEN);
         }
         token = token.substring(tokenHead.length()).trim();
+        // 检查token是否过期
+        if (redisTemplateProxy.isExpired(token)) {
+            response.setStatusCode(HttpStatus.UNAUTHORIZED);
+            return getVoidMono(response, ResultCode.USER_EMPTY_TOKEN);
+        }
         Claims userInfo = null;
         try {
             userInfo = jwtTokenUtil.getClaimsFromToken(token);

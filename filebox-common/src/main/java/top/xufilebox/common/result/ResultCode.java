@@ -21,7 +21,8 @@ public enum ResultCode {
     FILE_UPLOAD_COMPLETED("F0010", "已经上传了文件"),
     FILE_UPLOAD_NOT_COMPLETED("F0011", "上传文件未完成"),
     NOT_FILE_OWNER("F0012", "不是文件的拥有者"),
-    FILE_DONOT_EXIST("F0013", "文件由于未知错误不存在");
+    FILE_DONOT_EXIST("F0013", "文件由于未知错误不存在"),
+    SHARE_EXPIRED("F0014", "分享文件已经过期");
 
     private String code;
     private String msg;

@@ -1,11 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.xufilebox.common.mybatis.mapper.ShareMapper">
+    <resultMap id="fileInfoMap" type="top.xufilebox.common.dto.FileInfoDTO">
+        <id property="fileId" column="file_id" />
+        <result property="fileName" column="file_name" />
+        <result property="from" column="from" />
+        <result property="size" column="size" />
+        <result property="hash" column="hash" />
+        <result property="blockNumber" column="block_number" />
+        <result property="updateTime" column="update_time" />
+        <result property="createTime" column="create_time" />
+    </resultMap>
     <insert id="insertList" parameterType="java.util.List">
         INSERT INTO `filebox`.`f_share`(`from_user_name`, `file_id`, `hash`, `share_url`, `disable`, `effective_time`, `update_time`, `create_time`, `create_by`, `update_by`)
         VALUES
-        <foreach collection="list" item="share" open="(" close=")" separator=",">
-            #{share.fromUserName},#{share.fileId},#{share.hash},#{share.shareUrl},#{share.disable},#{share.effectiveTime},#{share.updateTime},#{share.createTime},#{share.createBy},#{share.updateBy}
+        <foreach collection="list" item="share" separator=",">
+            (#{share.fromUserName},#{share.fileId},#{share.hash},#{share.shareUrl},#{share.disable},#{share.effectiveTime},#{share.updateTime},#{share.createTime},#{share.createBy},#{share.updateBy})
         </foreach>
+    </insert>
+
+    <select id="selectShareFileList" parameterType="java.util.List" resultMap="fileInfoMap">
+        select `file_id`,`file_name`,`from`,`size`,`hash`,`block_number`,`update_time`,`create_time`, "0" as `is_dir`
+        from f_file f
+        where  f.file_id
+        in
+        <foreach collection="list" item="fileId" open="(" close=")" separator=",">
+            #{fileId}
+        </foreach>
+    </select>
+
+    <insert id="transferSave" parameterType="java.util.List">
+        insert into f_file(file_name, `size`, `hash`, block_number, `delete`, `status`,
+                           update_time, create_time, create_by, update_by, `owner`, `from`, parent_dir_id)
+            <foreach collection="list" item="transferSaveBaseDTO" separator=",">
+                (select file_name, `size`, `hash`, block_number, `delete`, `status`,
+                now() as `update_time`, now() as `create_time`, #{transferSaveBaseDTO.userId} as `create_by`,
+                        #{transferSaveBaseDTO.userId} as `update_by`, #{transferSaveBaseDTO.userId} as `owner`,
+                        #{transferSaveBaseDTO.from} as `from`, #{transferSaveBaseDTO.parentDirId} as `parent_dir_id`
+                from f_file where file_id = #{transferSaveBaseDTO.fileId})
+            </foreach>
     </insert>
 </mapper>

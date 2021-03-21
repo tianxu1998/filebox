@@ -19,6 +19,13 @@ public class JwtTokenUtil {
     public static final String CLAIM_USERNAME = "sub";
     public static final String CLAIM_CREATED = "created";
 
+    /**
+     * @return 返回默认的过期时间
+     */
+    public long getDefaultExpiration() {
+        return Long.valueOf(this.expiration) * 1000L;
+    }
+
     public  String generateToken(Map<String, Object> claims) {
         return Jwts.builder()
                     .setSubject((String) claims.get("userName"))
