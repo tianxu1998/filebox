@@ -77,7 +77,7 @@ spring:
 mybatis-plus:
   mapper-locations: classpath*:top/xufilebox/common/mybatis/mapper/*Mapper.xml
 
-# jwt的设置， token过期时间是1天 c
+# jwt的设置， token过期时间是1天
 jwt:
   secret: filebox
   expiration: 86400

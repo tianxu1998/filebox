@@ -82,7 +82,7 @@ fdfs:
     width: 150
     height: 150
   tracker-list:            #TrackerList参数,支持多个
-    - 112.126.102.38:22122
+    - 47.111.136.145:22122
   pool:
     #从池中借出的对象的最大数目（配置为-1表示不限制）
     max-total: -1
