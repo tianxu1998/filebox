@@ -15,7 +15,6 @@ import java.util.List;
  * @author: alextian
  * @create: 2021-02-05 21:02
  **/
-@CrossOrigin
 @RestController
 @RequestMapping("/file/search")
 public class FileSearchController {

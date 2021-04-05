@@ -11,6 +11,14 @@
         <result property="updateTime" column="update_time" />
         <result property="createTime" column="create_time" />
     </resultMap>
+
+    <resultMap id="shareInfoMap" type="top.xufilebox.common.dto.ShareInfoDTO$ShareInfoItem">
+        <result property="disable" column="disable" />
+        <result property="shareDate" column="create_time" />
+        <result property="fileNum" column="file_num" />
+        <result property="term" column="effective_time" />
+        <result property="shareUrl" column="share_url" />
+    </resultMap>
     <insert id="insertList" parameterType="java.util.List">
         INSERT INTO `filebox`.`f_share`(`from_user_name`, `file_id`, `hash`, `share_url`, `disable`, `effective_time`, `update_time`, `create_time`, `create_by`, `update_by`)
         VALUES
@@ -40,4 +48,19 @@
                 from f_file where file_id = #{transferSaveBaseDTO.fileId})
             </foreach>
     </insert>
+
+    <select id="getSharInfo" parameterType="java.lang.Integer" resultMap="shareInfoMap">
+        select share_url, create_time, effective_time, `disable`, count(*) as file_num
+        from f_share
+        where create_by = #{userId}
+        group by share_url;
+    </select>
+
+    <update id="disableShareUrl" parameterType="java.lang.String">
+        update f_share set `disable` = 1 where share_url = #{shareUrl}
+    </update>
+
+    <update id="enableShareUrl" parameterType="java.lang.String">
+        update f_share set `disable` = 0 where share_url = #{shareUrl}
+    </update>
 </mapper>

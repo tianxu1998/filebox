@@ -22,4 +22,6 @@ public interface FileMapper extends BaseMapper<File> {
     List<FileInfoDTO> listRootDirFile(@Param("userId") String userId);
 
     List<FileInfoDTO> listDirFile(@Param("dirId") Integer dirId);
+
+    List<FileInfoDTO> listDir(@Param("dirId") Integer dirId);
 }

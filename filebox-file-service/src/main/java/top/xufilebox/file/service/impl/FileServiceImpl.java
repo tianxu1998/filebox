@@ -2,6 +2,7 @@ package top.xufilebox.file.service.impl;
 
 import com.alibaba.druid.support.json.JSONUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,17 +30,14 @@ import top.xufilebox.common.util.LogicalValue;
 import top.xufilebox.file.entity.Chunk;
 import top.xufilebox.file.util.AESUtil;
 import top.xufilebox.file.util.FastDFSUtil;
-
+import top.xufilebox.common.dto.ShareInfoDTO.*;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -68,8 +66,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
     AESUtil aesUtil;
     @Autowired
     ShareMapper shareMapper;
-
-
 
 
     @Transactional
@@ -286,6 +282,17 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         return Result.success(ResultCode.SUCCESS, files);
     }
 
+    @ReadOnly
+    public Result<List<FileInfoDTO>> listDir(String userId, Integer dirId) {
+        Directory directory = directoryMapper.selectById(dirId);
+        if (directory.getOwner() != Integer.valueOf(userId)) {
+            return Result.failed(ResultCode.NOT_FILE_OWNER);
+        }
+        List<FileInfoDTO> files = fileMapper.listDir(dirId);
+        return Result.success(ResultCode.SUCCESS, files);
+    }
+
+    @Transactional
     public Result<String> generateUrl(String userId, GenerateUrlDTO generateUrlDTO) throws JsonProcessingException {
         List<Share> shareList = createShareFromDTO(userId, generateUrlDTO);
         shareMapper.insertList(shareList);
@@ -295,17 +302,66 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
 
     @ReadOnly
     public Result<List<FileInfoDTO>> decodeUrl(String url) {
-        Map<String, Object> dtoInfoMap = parseGenerateUrlDTO(url);
+        GenerateUrlDTO dto = parseGenerateUrlDTO(url);
         // 检查分享是否过期
-        if (expireCheck(dtoInfoMap.get("shareTime").toString(),
-                Integer.valueOf(dtoInfoMap.get("term").toString()))) {
+        if (expireCheck(dto.getShareTime(), dto.getTerm())) {
             return Result.failed(ResultCode.SHARE_EXPIRED);
         }
-        List<FileInfoDTO> res = shareMapper.selectShareFileList((List<Integer>) dtoInfoMap.get("fileIds"));
-        res.forEach(item -> item.setFrom(dtoInfoMap.get("from").toString()));
+        // 检查分享链接是否禁用
+        if (disableCheck(url)) {
+            return Result.failed(ResultCode.SHARE_DISABLED);
+        }
+        List<FileInfoDTO> res = shareMapper.selectShareFileList(dto.getFileIds());
+        res.forEach(item -> {
+            item.setFrom(dto.getFrom());
+            item.setSuffix(item.getFileName().substring(item.getFileName().lastIndexOf(".") + 1));
+        });
         return Result.success(ResultCode.SUCCESS, res);
     }
 
+    /**
+     *  检查分享链接是否禁用
+     * @param shareUrl
+     * @return 返回true禁用， false未禁用
+     */
+    private boolean disableCheck(String shareUrl) {
+        LambdaQueryWrapper<Share> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.eq(Share::getShareUrl, shareUrl)
+                .eq(Share::getDisable, 1);
+        return !shareMapper.selectList(queryWrapper).isEmpty();
+    }
+
+    /**
+     * 重命名文件
+     * @param userId 用户Id
+     * @param request 新文件名字 和 文件Id
+     * @return
+     */
+    public Result<String> rename(String userId, FileRenameDTO request) {
+        File file = fileMapper.selectById(request.getFileId());
+        if (!userId.equals(file.getOwner().toString())) {
+            return Result.failed(ResultCode.NOT_FILE_OWNER, "不是文件拥有者");
+        }
+        file.setFileName(request.getNewName());
+        fileMapper.updateById(file);
+        return Result.success();
+    }
+
+    /**
+     * 重命名文件夹
+     * @param userId 用户Id
+     * @param request 新文件夹名字 和 文件夹Id
+     * @return
+     */
+    public Result<String> renameDir(String userId, FileRenameDTO request) {
+        Directory file = directoryMapper.selectById(request.getFileId());
+        if (!userId.equals(file.getOwner().toString())) {
+            return Result.failed(ResultCode.NOT_FILE_OWNER, "不是文件拥有者");
+        }
+        file.setDirName(request.getNewName());
+        directoryMapper.updateById(file);
+        return Result.success();
+    }
 
     /**
      * 保存用户分享到我的文件
@@ -314,20 +370,23 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
      * @return
      */
     public Result<String> transferSave(String userId, TransferSaveDTO request) {
-        Map<String, Object> dtoInfoMap = parseGenerateUrlDTO(request.getUrl());
+        GenerateUrlDTO dto = parseGenerateUrlDTO(request.getUrl());
         // 检查分享是否过期
-        if (expireCheck(dtoInfoMap.get("shareTime").toString(),
-                Integer.valueOf(dtoInfoMap.get("term").toString()))) {
+        if (expireCheck(dto.getShareTime(), dto.getTerm())) {
             return Result.failed(ResultCode.SHARE_EXPIRED);
         }
-        List<Integer> fileIds = (List<Integer>) dtoInfoMap.get("fileIds");
+        // 检查是否禁用
+        if (disableCheck(request.getUrl())) {
+            return Result.failed(ResultCode.SHARE_DISABLED);
+        }
+        List<Integer> fileIds = (dto.getFileIds());
         shareMapper.transferSave(fileIds.stream().map(fileId -> {
-            TransferSaveBaseDTO dto = new TransferSaveBaseDTO();
-            dto.setFileId(fileId);
-            dto.setFrom(dtoInfoMap.get("from").toString());
-            dto.setParentDirId(request.getToDirId());
-            dto.setUserId(Integer.valueOf(userId));
-            return dto;
+            TransferSaveBaseDTO baseDTO = new TransferSaveBaseDTO();
+            baseDTO.setFileId(fileId);
+            baseDTO.setFrom(baseDTO.getFrom());
+            baseDTO.setParentDirId(request.getToDirId());
+            baseDTO.setUserId(Integer.valueOf(userId));
+            return baseDTO;
         }).collect(Collectors.toList()));
         return Result.success();
     }
@@ -339,9 +398,49 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
      * @return
      */
     private boolean expireCheck(String shareTime, Integer term) {
-        return LocalDateTime.parse(shareTime, GenerateUrlDTO.DTF)
-                .plusDays(term)
-                .isBefore(LocalDateTime.now());
+        return expireCheck(LocalDateTime.parse(shareTime, GenerateUrlDTO.DTF), term);
+    }
+
+    private boolean expireCheck(LocalDateTime time, Integer term) {
+        return time.plusDays(term)
+                   .isBefore(LocalDateTime.now());
+    }
+
+    /**
+     * 检查是否文件拥有者
+     * @param userName
+     * @param shareUrl
+     * @return true代表是文件拥有者 false不是
+     */
+    public boolean shareUrlOwnerCheck(String userName, String shareUrl) {
+        String jsonStr = aesUtil.dcodes(shareUrl);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            GenerateUrlDTO dto = objectMapper.readValue(jsonStr, GenerateUrlDTO.class);
+            if (!userName.equals(dto.getFrom())) {
+                return false;
+            }
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    /**
+     * 检查分享文件是否过期
+     * @param shareUrl
+     * @return true过期， false未过期
+     */
+    public boolean shareUrlExpiredCheck(String shareUrl) {
+        String jsonStr = aesUtil.dcodes(shareUrl);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            GenerateUrlDTO dto = objectMapper.readValue(jsonStr, GenerateUrlDTO.class);
+            return expireCheck(dto.getShareTime(), dto.getTerm());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return true;
+        }
     }
 
     /**
@@ -361,9 +460,16 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
      * @param url
      * @return
      */
-    private Map<String, Object> parseGenerateUrlDTO(String url) {
+    private GenerateUrlDTO parseGenerateUrlDTO(String url) {
         String dtoJsonStr = aesUtil.dcodes(url);
-        return (Map<String, Object>) JSONUtils.parse(dtoJsonStr);
+        ObjectMapper objectMapper = new ObjectMapper();
+        GenerateUrlDTO ret = null;
+        try {
+            ret = objectMapper.readValue(dtoJsonStr, GenerateUrlDTO.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return ret;
     }
 
     private List<Share> createShareFromDTO(String userId, GenerateUrlDTO generateUrlDTO) throws JsonProcessingException {
@@ -386,4 +492,38 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
     }
 
 
+//    @ReadOnly TODO 加上ReadOnly
+    public Result<ShareInfoDTO> getShareInfo(String userId) {
+        ShareInfoDTO data = new ShareInfoDTO();
+        List<ShareInfoItem> items = shareMapper.getSharInfo(Integer.valueOf(userId));
+        items.forEach(item -> {
+            Integer expired = expireCheck(item.getShareDate(), item.getTerm()) ? LogicalValue.TRUE : LogicalValue.FALSE;
+            item.setExpired(expired);
+        });
+        Collections.sort(items,
+                        Comparator.comparingInt(ShareInfoItem::getExpired)
+                                .thenComparing(ShareInfoItem::getShareDate, Comparator.reverseOrder()));
+        data.setItems(items);
+        return Result.success(ResultCode.SUCCESS, data);
+    }
+
+    /**
+     * 禁用url
+     * @param shareUrl
+     * @return
+     */
+    public Result<String> disableShareUrl(String shareUrl) {
+        shareMapper.disableShareUrl(shareUrl);
+        return Result.success(ResultCode.SUCCESS, "禁用成功");
+    }
+
+    /**
+     * 启用url
+     * @param shareUrl
+     * @return
+     */
+    public Result<String> enableShareUrl(String shareUrl) {
+        shareMapper.enableShareUrl(shareUrl);
+        return Result.success(ResultCode.SUCCESS, "启用成功");
+    }
 }

@@ -31,4 +31,7 @@
         select `file_id`,`file_name`,`from`,`size`,`hash`,`block_number`,`update_time`,`create_time`, "0" as `is_dir` from f_file where status = 1 and parent_dir_id = #{dirId}
     </select>
 
+    <select id="listDir" parameterType="java.lang.Integer" resultMap="fileInfoMap">
+        select `file_id`,`file_name`,`from`,`size`,`hash`,`block_number`,`update_time`,`create_time`, "0" as `is_dir` from f_file where status = 1 and parent_dir_id = #{dirId}
+    </select>
 </mapper>

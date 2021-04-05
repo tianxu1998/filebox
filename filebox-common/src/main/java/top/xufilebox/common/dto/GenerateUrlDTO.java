@@ -11,7 +11,7 @@ import java.util.List;
  * @create: 2021-02-25 14:34
  **/
 public class GenerateUrlDTO implements Serializable {
-    public static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    public static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private Integer term; // 有效期, 以天为单位
     private List<Integer> fileIds; // 分享的文件id
     private String from; // 分享者用户名
