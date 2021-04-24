@@ -23,7 +23,7 @@ public class FileShareController {
     FileServiceImpl fileService;
 
     /**
-     * 用户分享文件给他人
+     * 用户分享文件给他人生成分享链接
      * @param userId
      * @param generateUrlDTO
      * @return
@@ -110,14 +110,6 @@ public class FileShareController {
             return Result.failed(ResultCode.SHARE_EXPIRED);
         }
         return fileService.enableShareUrl(shareUrl);
-    }
-
-    @Autowired
-    ShareMapper shareMapper;
-    @RequestMapping("/test")
-    public Result<LocalDateTime> testGetTime() {
-        LocalDateTime res = shareMapper.test("220B7B0086C9BD5E327D9A202DD7C180070EB29EB9ED7438869B0C0FFDE0A0A2D2863462C1B7CFF83DC9C5773B0068D23752C944D6437A0AD5F4DF74614688DC6014456A8AF8912136DE3B0189782916");
-        return Result.success(ResultCode.SUCCESS, res);
     }
 
 }

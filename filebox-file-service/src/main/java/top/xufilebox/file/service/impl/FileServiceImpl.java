@@ -133,7 +133,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
             chunkNumber = 0;
         }
         InputStream inputStream = file.getInputStream();
+        // 随机获得文件分组名称
         String groupName = fastDFSUtil.randomGroupName();
+        // 存到fastdfs
         StorePath storePath = storageClient.uploadFile(groupName, inputStream, chunk.getCurrentChunkSize(), ext);
 
         // 持久化chunk存储信息到mysql
@@ -153,6 +155,13 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         return Result.success();
     }
 
+    /**
+     * 该md5的文件上传完成， 更新该md5对应的文件上传状态为完成
+     *
+     * @param md5
+     * @param userId
+     * @return
+     */
     public Result<String> uploadFileSuccess(String md5, String userId) {
         File file = new File();
         file.setStatus(1);
@@ -166,6 +175,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         return Result.success();
     }
 
+    /**
+     * 校验该md5的文件是否已经存在系统
+     * @param chunk
+     * @param userId
+     * @return
+     */
     @ReadOnly
     public Result uploadFileTest(Chunk chunk, String userId) {
         LambdaQueryWrapper<File> fileQueryWrapper = new LambdaQueryWrapper<>();
@@ -182,6 +197,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         }
     }
 
+    /**
+     *     根据fileId获取文件的hash和分块数量等
+     */
     public Result<FileHashInfoDTO> getFileBlocks(Integer fileId, String userId) {
         LambdaQueryWrapper<File> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(File::getFileId, fileId);
@@ -203,6 +221,13 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         return Result.success(ResultCode.SUCCESS, res);
     }
 
+    /**
+     * 从文件存储集群下载
+     * @param response
+     * @param blockName
+     * @return
+     * @throws IOException
+     */
     public Result download(HttpServletResponse response, String blockName) throws IOException {
         LambdaQueryWrapper<Block> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Block::getHash, blockName);
@@ -293,6 +318,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
     }
 
     @Transactional
+    /**
+     * 插入分享信息到数据库
+     */
     public Result<String> generateUrl(String userId, GenerateUrlDTO generateUrlDTO) throws JsonProcessingException {
         List<Share> shareList = createShareFromDTO(userId, generateUrlDTO);
         shareMapper.insertList(shareList);
