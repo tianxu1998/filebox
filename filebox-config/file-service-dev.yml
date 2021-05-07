@@ -115,3 +115,7 @@ eureka:
   client:
     service-url:
       defaultZone: http://eureka.xufilebox.top:8002/eureka/,http://eureka.xufilebox.top:8001/eureka/
+
+logging:
+  file:
+    path: logs

@@ -11,16 +11,14 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.github.tobato.fastdfs.service.TrackerClient;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import top.xufilebox.common.annotation.ReadOnly;
 import top.xufilebox.common.dto.*;
-import top.xufilebox.common.mybatis.entity.Block;
-import top.xufilebox.common.mybatis.entity.Directory;
-import top.xufilebox.common.mybatis.entity.File;
-import top.xufilebox.common.mybatis.entity.Share;
+import top.xufilebox.common.mybatis.entity.*;
 import top.xufilebox.common.mybatis.mapper.*;
 import top.xufilebox.common.mybatis.service.IFileService;
 import top.xufilebox.common.result.Result;
@@ -46,6 +44,7 @@ import java.util.stream.Collectors;
  * @create: 2021-02-05 20:55
  **/
 @Service
+@Slf4j
 public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IFileService {
     @Autowired
     FileMapper fileMapper;
@@ -162,6 +161,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
      * @param userId
      * @return
      */
+    @Transactional
     public Result<String> uploadFileSuccess(String md5, String userId) {
         File file = new File();
         file.setStatus(1);
@@ -172,6 +172,19 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
                 .eq(File::getHash, md5)
                 .eq(File::getStatus, Constant.UPLOAD_UNCOMPLETED);
         fileMapper.update(file, queryWrapper);
+        // 更新用户已使用的存储空间， TODO 存在并发问题，应该使用分布式锁优化
+        Long fileSize = file.getSize();
+        log.info("file:{}", JSONUtils.toJSONString(file));
+        System.out.println("file:" + JSONUtils.toJSONString(file));
+        LambdaQueryWrapper<User> query = Wrappers.lambdaQuery();
+        query.eq(User::getUserId, Integer.valueOf(userId));
+        log.info("userId: {}", userId);
+        System.out.println("userId" + userId);
+        User user = userMapper.selectOne(query);
+        log.info("user:{}", user);
+        System.out.println("user" + user.toString());
+        user.setUsedCapacity(user.getCapacity() + fileSize);
+        userMapper.updateById(user);
         return Result.success();
     }
 
@@ -313,14 +326,25 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         if (directory.getOwner() != Integer.valueOf(userId)) {
             return Result.failed(ResultCode.NOT_FILE_OWNER);
         }
-        List<FileInfoDTO> files = fileMapper.listDir(dirId);
-        return Result.success(ResultCode.SUCCESS, files);
+        List<FileInfoDTO> dirs = fileMapper.listDir(dirId);
+        return Result.success(ResultCode.SUCCESS, dirs);
     }
 
-    @Transactional
+    /**
+     * 列出家目录的文件夹
+     * @param userId
+     * @return
+     */
+    @ReadOnly
+    public Result<List<FileInfoDTO>> listRootDir(String userId) {
+        List<FileInfoDTO> dirs = fileMapper.listRootDir(userId);
+        return Result.success(ResultCode.SUCCESS, dirs);
+    }
+
     /**
      * 插入分享信息到数据库
      */
+    @Transactional
     public Result<String> generateUrl(String userId, GenerateUrlDTO generateUrlDTO) throws JsonProcessingException {
         List<Share> shareList = createShareFromDTO(userId, generateUrlDTO);
         shareMapper.insertList(shareList);
@@ -408,14 +432,11 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
             return Result.failed(ResultCode.SHARE_DISABLED);
         }
         List<Integer> fileIds = (dto.getFileIds());
-        shareMapper.transferSave(fileIds.stream().map(fileId -> {
-            TransferSaveBaseDTO baseDTO = new TransferSaveBaseDTO();
-            baseDTO.setFileId(fileId);
-            baseDTO.setFrom(baseDTO.getFrom());
-            baseDTO.setParentDirId(request.getToDirId());
-            baseDTO.setUserId(Integer.valueOf(userId));
-            return baseDTO;
-        }).collect(Collectors.toList()));
+        TransferSaveBaseDTO baseDTO = new TransferSaveBaseDTO();
+        baseDTO.setFrom(baseDTO.getFrom());
+        baseDTO.setParentDirId(request.getToDirId());
+        baseDTO.setUserId(Integer.valueOf(userId));
+        shareMapper.transferSave(baseDTO, fileIds);
         return Result.success();
     }
 
@@ -520,7 +541,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
     }
 
 
-//    @ReadOnly TODO 加上ReadOnly
+    @ReadOnly
     public Result<ShareInfoDTO> getShareInfo(String userId) {
         ShareInfoDTO data = new ShareInfoDTO();
         List<ShareInfoItem> items = shareMapper.getSharInfo(Integer.valueOf(userId));
@@ -554,4 +575,5 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         shareMapper.enableShareUrl(shareUrl);
         return Result.success(ResultCode.SUCCESS, "启用成功");
     }
+
 }

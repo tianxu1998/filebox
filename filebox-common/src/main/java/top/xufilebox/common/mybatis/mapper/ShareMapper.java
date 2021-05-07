@@ -28,7 +28,7 @@ public interface ShareMapper extends BaseMapper<Share> {
 
     List<FileInfoDTO> selectShareFileList(List<Integer> fileIds);
 
-    void transferSave(List<TransferSaveBaseDTO> fileIds);
+    void transferSave(@Param("dto") TransferSaveBaseDTO dto, @Param("list") List<Integer> fileIds);
 
     List<ShareInfoDTO.ShareInfoItem> getSharInfo(@Param("userId") Integer userId);
 

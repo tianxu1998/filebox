@@ -15,3 +15,8 @@ eureka:
       defaultZone: http://localhost:8001/eureka/
   server:
     enable-self-preservation: false
+
+management:
+  health:
+    mail:
+      enabled: false

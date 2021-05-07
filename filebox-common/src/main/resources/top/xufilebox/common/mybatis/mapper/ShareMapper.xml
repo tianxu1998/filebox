@@ -40,13 +40,14 @@
     <insert id="transferSave" parameterType="java.util.List">
         insert into f_file(file_name, `size`, `hash`, block_number, `delete`, `status`,
                            update_time, create_time, create_by, update_by, `owner`, `from`, parent_dir_id)
-            <foreach collection="list" item="transferSaveBaseDTO" separator=",">
-                (select file_name, `size`, `hash`, block_number, `delete`, `status`,
-                now() as `update_time`, now() as `create_time`, #{transferSaveBaseDTO.userId} as `create_by`,
-                        #{transferSaveBaseDTO.userId} as `update_by`, #{transferSaveBaseDTO.userId} as `owner`,
-                        #{transferSaveBaseDTO.from} as `from`, #{transferSaveBaseDTO.parentDirId} as `parent_dir_id`
-                from f_file where file_id = #{transferSaveBaseDTO.fileId})
-            </foreach>
+                select file_name, `size`, `hash`, block_number, `delete`, `status`,
+                now(), now(), #{dto.userId},
+                        #{dto.userId}, #{dto.userId},
+                        #{dto.from}, #{dto.parentDirId}
+                from f_file where file_id in
+                <foreach collection="list" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
     </insert>
 
     <select id="getSharInfo" parameterType="java.lang.Integer" resultMap="shareInfoMap">

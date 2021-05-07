@@ -162,6 +162,17 @@ public class FileController {
     }
 
     /**
+     * 查询根目录下的文件夹列表
+     * @param userId
+     * @param dirId
+     * @return
+     */
+    @RequestMapping("/listDir/home")
+    public Result<List<FileInfoDTO>> listDir(@RequestHeader("userId") String userId) {
+        return fileService.listRootDir(userId);
+    }
+
+    /**
      * 重命名文件
      * @param userId
      * @param request
