@@ -117,5 +117,4 @@ eureka:
       defaultZone: http://eureka.xufilebox.top:8002/eureka/,http://eureka.xufilebox.top:8001/eureka/
 
 logging:
-  file:
-    path: logs
+  config: classpath:log4j2-spring.xml
