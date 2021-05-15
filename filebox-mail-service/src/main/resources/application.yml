@@ -72,6 +72,13 @@ spring:
     protocol: smtp
     default-encoding: UTF-8
     port: 465
+    properties.mail.smtp.auth: true
+    properties.mail.smtp.port: 465
+    properties.mail.display.sendmail: xufilebox
+    properties.mail.display.sendname: xufilebox
+    properties.mail.smtp.starttls.enable: true
+    properties.mail.smtp.starttls.required: true
+    properties.mail.smtp.ssl.enable: true
 
 filebox:
   mail:
