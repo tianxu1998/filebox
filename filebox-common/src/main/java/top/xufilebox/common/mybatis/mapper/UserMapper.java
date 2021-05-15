@@ -29,4 +29,6 @@ public interface UserMapper extends BaseMapper<User> {
     Map<String, String> findTimeline(@Param("userId") String userId);
 
     Integer getRootDirId(@Param("userId") String userId);
+
+    void updateUsedCapatity(@Param("fileSize") Long fileSize, @Param("userId") String userId);
 }

@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.multipart.MultipartFile;
 import top.xufilebox.common.annotation.ReadOnly;
 import top.xufilebox.common.dto.*;
@@ -173,18 +174,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
                 .eq(File::getStatus, Constant.UPLOAD_UNCOMPLETED);
         fileMapper.update(file, queryWrapper);
         // 更新用户已使用的存储空间， TODO 存在并发问题，应该使用分布式锁优化
-        Long fileSize = file.getSize();
-        log.info("file:{}", JSONUtils.toJSONString(file));
-        System.out.println("file:" + JSONUtils.toJSONString(file));
-        LambdaQueryWrapper<User> query = Wrappers.lambdaQuery();
-        query.eq(User::getUserId, Integer.valueOf(userId));
-        log.info("userId: {}", userId);
-        System.out.println("userId" + userId);
-        User user = userMapper.selectOne(query);
-        log.info("user:{}", user);
-        System.out.println("user" + user.toString());
-        user.setUsedCapacity(user.getCapacity() + fileSize);
-        userMapper.updateById(user);
+        Long fileSize = fileMapper.findFileSizeByHash(md5);
+        userMapper.updateUsedCapatity(fileSize, userId);
         return Result.success();
     }
 
@@ -576,4 +567,41 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         return Result.success(ResultCode.SUCCESS, "启用成功");
     }
 
+    /**
+     * 删除指定fileId的文件
+     * @param userId
+     * @param fileId
+     * @return
+     */
+    public Result<String> deleteFile(String userId, String fileId) {
+        // 检查是否对应文件拥有者
+        Integer userIdByFileId = fileMapper.findUserIdByFileId(Integer.valueOf(fileId));
+        if (!userId.equals(String.valueOf(userIdByFileId))) {
+            return Result.failed(ResultCode.NOT_FILE_OWNER);
+        }
+        fileMapper.deleteById(Integer.valueOf(fileId));
+        return Result.success();
+    }
+
+    /**
+     * 删除指定dirId的文件
+     * @param userId
+     * @param dirId
+     * @return
+     */
+    @Transactional
+    public Result<String> deleteDir(String userId, String dirId) {
+        // 检查是否对应文件夹拥有者
+        Integer userIdByDirId = directoryMapper.findUserIdByDirId(dirId);
+        if (!userId.equals(String.valueOf(userIdByDirId))) {
+            return Result.failed(ResultCode.NOT_FILE_OWNER);
+        }
+        // 删除其下的所有文件和文件夹 TODO 需要改成递归删除
+        LambdaQueryWrapper<File> deleteFileWrapper = Wrappers.lambdaQuery();
+        deleteFileWrapper.eq(File::getParentDirId, Integer.valueOf(dirId));
+        fileMapper.delete(deleteFileWrapper);
+        // 删除当前文件夹
+        directoryMapper.deleteById(Integer.valueOf(dirId));
+        return Result.success();
+    }
 }

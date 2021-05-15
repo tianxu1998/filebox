@@ -42,4 +42,8 @@
         from u_user
         where user_id = #{userId};
     </select>
+
+    <update id="updateUsedCapatity">
+        update u_user set `used_capacity` = `used_capacity` + #{fileSize} where user_id = #{userId}
+    </update>
 </mapper>

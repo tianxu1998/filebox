@@ -89,11 +89,13 @@ public class AuthUserServiceImpl extends ServiceImpl<UserMapper, User> implement
     @Override
     @Transactional
     public Result<Map<String, String>> create(CreateDTO createDTO) {
+        // 校验验证码
         String verifyCode = redisTemplateProxy.getValue(createDTO.getVerifyCodeKey());
         if (verifyCode == null || verifyCode.equals("")
                 || verifyCode.equals("-1") || !verifyCode.equals(createDTO.getVerifyCode())) {
             return Result.failed(ResultCode.USER_VERIFYCODE_ERROR);
         }
+        // 删除redis中的验证码
         redisTemplateProxy.delete(createDTO.getVerifyCodeKey());
 
         // 1. 创建用户

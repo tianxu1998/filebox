@@ -4,13 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import top.xufilebox.common.dto.SendMailDTO;
 import top.xufilebox.common.result.Result;
 import top.xufilebox.common.result.ResultCode;
 
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -24,21 +25,18 @@ public class MailController {
     // 占位符
     @Value("${filebox.mail.placeholder}")
     private String placeholder;
+
     /**
      * 发送文本文件
-     * @param to 邮件接收者
-     * @param title 邮件标题
-     * @param template 邮件模板
-     * @param keyWords 替换关键字
      * @return
      */
-    @RequestMapping("/sendText")
-    public Result sendTextMail(String to, String title, String template, List<String> keyWords) throws Exception {
+    @RequestMapping(value = "/sendText", method = RequestMethod.POST)
+    public Result sendTextMail(@RequestBody SendMailDTO dto) throws Exception {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setFrom(from);
-        msg.setTo(to);
-        msg.setSubject(title);
-        msg.setText(placeholderReplace(template, keyWords));
+        msg.setTo(dto.getTo());
+        msg.setSubject(dto.getTitle());
+        msg.setText(placeholderReplace(dto.getTemplate(), dto.getKeyWords()));
         mailSender.send(msg);
         return Result.success(ResultCode.SUCCESS, "发送成功");
     }
