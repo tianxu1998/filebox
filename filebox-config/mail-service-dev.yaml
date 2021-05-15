@@ -70,6 +70,7 @@ spring:
     username: xufilebox@163.com
     protocol: smtp
     default-encoding: UTF-8
+    port: 465
 
 filebox:
   mail:
