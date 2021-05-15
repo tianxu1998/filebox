@@ -77,12 +77,12 @@ filebox:
     placeholder: $
 server:
   port: 8051
-eureka:
-  instance:
-    prefer-ip-address: true
-    instance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${spring.application.instance_id:${server.port}}
-    hostname: 39.102.62.60
-    ip-address: 39.102.62.60
-  client:
-    service-url:
-      defaultZone: http://eureka.xufilebox.top:8002/eureka/,http://eureka.xufilebox.top:8001/eureka/
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#    instance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${spring.application.instance_id:${server.port}}
+#    hostname: 39.102.62.60
+#    ip-address: 39.102.62.60
+#  client:
+#    service-url:
+#      defaultZone: http://eureka.xufilebox.top:8002/eureka/,http://eureka.xufilebox.top:8001/eureka/
