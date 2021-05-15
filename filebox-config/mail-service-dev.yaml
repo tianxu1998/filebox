@@ -74,3 +74,5 @@ spring:
 filebox:
   mail:
     placeholder: $
+server:
+  port: 8051
