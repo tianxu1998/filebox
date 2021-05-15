@@ -99,8 +99,10 @@ url:
   encoder:
     key:
       xufilebox
+
 filebox:
   question:
     questionsMap: '{ "如何找回密码？": "本系统为了保护用户的隐私，对密码进行了加密处理，因此无法找回密码，可以联系管理员重置。", "如何联系管理员？": "请在输入框中输入【人工+问题+联系方式】，例如：【人工：请问怎么能变成大佬。手机号码：138xxxxxxxx。】管理员看到消息后会尽快回复，一定要在开头加【人工】字样" }'
     questionMail: tianxu1998@outlook.com
     questionTitle: filebox问题反馈
+
