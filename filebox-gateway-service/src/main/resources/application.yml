@@ -64,7 +64,7 @@ eureka:
 
 # 白名单， 用,分隔， 中间不可加空格
 filebox:
-  allowPaths: /auth/**
+  allowPaths: /auth/*,/auth/userExist/*
 logging:
   level:
     root: info

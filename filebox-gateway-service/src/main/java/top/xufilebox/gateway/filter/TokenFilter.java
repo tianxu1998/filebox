@@ -89,6 +89,7 @@ public class TokenFilter implements GlobalFilter, Ordered {
         // 把经过网关解析的用户基本信息填到header中，除了网关其他微服务无需进行不必要的身份认证
         ServerHttpRequest newRequest = request.mutate().headers(headers -> {
             headers.add("userName", userName);
+            headers.remove("userId");
             headers.add("userId", userId);
             headers.add("role", role);
             headers.add("nickName", nickName);

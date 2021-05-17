@@ -23,7 +23,8 @@ public enum ResultCode {
     NOT_FILE_OWNER("F0012", "不是文件的拥有者"),
     FILE_DONOT_EXIST("F0013", "文件由于未知错误不存在"),
     SHARE_EXPIRED("F0014", "分享文件已经过期"),
-    SHARE_DISABLED("F0015", "分享链接已禁用");
+    SHARE_DISABLED("F0015", "分享链接已禁用"),
+    EMAIL_FORMAT_ERROR("U0019", "邮箱不存在或格式不正确");
 
     private String code;
     private String msg;

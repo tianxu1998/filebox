@@ -3,6 +3,7 @@ package top.xufilebox.file.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.xufilebox.common.dto.QuestionDTO;
+import top.xufilebox.common.dto.SendMailQuestionDTO;
 import top.xufilebox.common.dto.UploadFileDTO;
 import top.xufilebox.common.mybatis.entity.File;
 import top.xufilebox.common.result.Result;
@@ -40,8 +41,8 @@ public class QuestionController {
      * @param question
      * @return
      */
-    @RequestMapping("/sendMailQuestion/{question}")
-    public Result sendMailQuestion(@PathVariable("question") String question) {
-        return questionService.sendMailQuestion(question);
+    @RequestMapping("/sendMailQuestion")
+    public Result sendMailQuestion(@RequestBody SendMailQuestionDTO question) {
+        return questionService.sendMailQuestion(question.getQuestion());
     }
 }

@@ -3,6 +3,7 @@ package top.xufilebox.common.mybatis.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import top.xufilebox.common.dto.UserInfoDTO;
 import top.xufilebox.common.mybatis.entity.User;
 
@@ -31,4 +32,7 @@ public interface UserMapper extends BaseMapper<User> {
     Integer getRootDirId(@Param("userId") String userId);
 
     void updateUsedCapatity(@Param("fileSize") Long fileSize, @Param("userId") String userId);
+
+    @Select("select email from u_user where user_id = #{userId}")
+    String findEmailById(@Param("userId") Integer userId);
 }

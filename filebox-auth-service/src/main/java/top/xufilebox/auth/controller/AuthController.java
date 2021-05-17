@@ -97,4 +97,9 @@ public class AuthController {
     public Result logout(@RequestParam(name = "token") String token) {
         return userService.logout(token);
     }
+
+    @RequestMapping("/mail/sendMailVerifyCode")
+    public Result sendMailVerifyCode(@RequestHeader("userId") String userId) {
+        return userService.sendMailVerifyCode(userId);
+    }
 }

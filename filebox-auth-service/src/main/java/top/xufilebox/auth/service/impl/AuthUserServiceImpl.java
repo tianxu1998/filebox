@@ -1,16 +1,18 @@
 package top.xufilebox.auth.service.impl;
 
-import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import top.xufilebox.auth.call.MailServiceFeign;
 import top.xufilebox.auth.util.JwtTokenUtil;
 import top.xufilebox.common.annotation.ReadOnly;
 import top.xufilebox.common.dto.CreateDTO;
 import top.xufilebox.common.dto.LoginDTO;
+import top.xufilebox.common.dto.SendMailDTO;
 import top.xufilebox.common.mybatis.entity.Directory;
 import top.xufilebox.common.mybatis.entity.User;
 import top.xufilebox.common.mybatis.entity.UserRole;
@@ -25,8 +27,12 @@ import top.xufilebox.common.util.Constant;
 import top.xufilebox.common.util.LogicalValue;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+
+import static top.xufilebox.common.util.Constant.MAIL_CODE_EXPIRATION;
 
 /**
  * <p>
@@ -50,6 +56,13 @@ public class AuthUserServiceImpl extends ServiceImpl<UserMapper, User> implement
     UserRoleMapper userRoleMapper;
     @Autowired
     DirectoryMapper directoryMapper;
+    @Autowired
+    MailServiceFeign mailClient;
+
+    // 邮件模板
+    public static final String EMAIL_TEMPLATE = "您好，您正在使用filebox文件存储平台，您的验证码是：【$】。\n如果不是本人操作，请忽略此邮件。";
+    // 随机生成验证码的字符串
+    public static final String BASE_CHAR = "0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
 
     @Override
     @ReadOnly
@@ -186,5 +199,35 @@ public class AuthUserServiceImpl extends ServiceImpl<UserMapper, User> implement
         return userRole;
     }
 
+    public Result sendMailVerifyCode(String userId) {
+        String email = userMapper.findEmailById(Integer.valueOf(userId));
+        if (StringUtils.isBlank(email) || email.indexOf("@") == -1) {
+            return Result.failed(ResultCode.EMAIL_FORMAT_ERROR);
+        }
+        String verifyCode = randomVerifyCode();
+        // 发送验证码邮件
+        mailClient.sendTextMail(SendMailDTO.builder()
+                .title("【xufilebox文件存储系统】【验证码】")
+                .to(email)
+                .template(EMAIL_TEMPLATE)
+                .keyWords(Arrays.asList(verifyCode))
+                .build());
+        // redis存储邮箱验证码key的格式"userId_mail_mailAddress"
+        redisTemplateProxy.setEX(userId + "_mail_" + email, verifyCode, MAIL_CODE_EXPIRATION);
+        return Result.success();
+    }
 
+    /**
+     * 生成随机六位的验证码，范围是大写小写字母和0-9数字
+     * @return
+     */
+    private String randomVerifyCode() {
+        Random rand = new Random();
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < 6; i++) {
+            int idx = rand.nextInt(BASE_CHAR.length());
+            sb.append(BASE_CHAR.charAt(idx));
+        }
+        return sb.toString();
+    }
 }
