@@ -604,4 +604,19 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         directoryMapper.deleteById(Integer.valueOf(dirId));
         return Result.success();
     }
+
+    public Result<String> moveFiles(String userId, MoveFileDTO moveFileDTO) {
+        // 检查是否对应文件的拥有者
+        LambdaQueryWrapper<File> checkOwnerWrapper = Wrappers.lambdaQuery();
+        checkOwnerWrapper.in(File::getFileId, moveFileDTO.getFileIds())
+                        .eq(File::getOwner, Integer.valueOf(userId));
+        Integer count = fileMapper.selectCount(checkOwnerWrapper);
+        if (count != moveFileDTO.getFileIds().size()) {
+            return Result.failed(ResultCode.FAILED);
+        }
+        File file = new File();
+        file.setParentDirId(moveFileDTO.getToDir());
+        fileMapper.update(file, checkOwnerWrapper);
+        return Result.success(ResultCode.SUCCESS);
+    }
 }

@@ -3,6 +3,8 @@ package top.xufilebox.gateway.filter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.core.util.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -26,6 +28,7 @@ import top.xufilebox.gateway.component.AllowPathHolder;
 import top.xufilebox.gateway.util.JwtTokenUtil;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.function.Consumer;
 
@@ -35,6 +38,7 @@ import java.util.function.Consumer;
  * @create: 2020-12-23 15:50
  **/
 @Component
+@Slf4j
 public class TokenFilter implements GlobalFilter, Ordered {
     @Autowired
     JwtTokenUtil jwtTokenUtil;
@@ -56,7 +60,11 @@ public class TokenFilter implements GlobalFilter, Ordered {
                 .filter(path -> pathMatcher.match(path, uri))
                 .count();
         if (count > 0) {
-            return chain.filter(exchange);
+            return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+                log.info("gateway log[ time:{}, path:{}, request:{}, response:{}]",
+                        LocalDateTime.now(), exchange.getRequest().getURI().getPath(),
+                        exchange.getRequest(), exchange.getResponse());
+            }));
         }
         String token = request.getHeaders().getFirst("Authorization");
         // 检查是否为空
@@ -95,7 +103,11 @@ public class TokenFilter implements GlobalFilter, Ordered {
             headers.add("nickName", nickName);
         }).build();
         ServerWebExchange newExchange = exchange.mutate().request(newRequest).build();
-        return chain.filter(newExchange);
+        return chain.filter(newExchange).then(Mono.fromRunnable(() -> {
+            log.info("gateway log[ time:{}, path:{}, request:{}, response:{}]",
+                    LocalDateTime.now(), exchange.getRequest().getURI().getPath(),
+                    exchange.getRequest(), exchange.getResponse());
+        }));
     }
 
     private Mono<Void> getVoidMono(ServerHttpResponse serverHttpResponse, ResultCode responseCodeEnum) {

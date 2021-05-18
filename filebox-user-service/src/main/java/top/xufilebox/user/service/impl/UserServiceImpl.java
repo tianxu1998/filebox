@@ -2,6 +2,7 @@ package top.xufilebox.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -108,6 +109,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     public Result updatePassword(String userId, UpdatePasswordDTO updatePasswordDTO) {
+        // 校验验证码
+        String email = userMapper.findEmailById(Integer.valueOf(userId));
+        String verifyCodeKey = userId + "_mail_" + email;
+        String code = redisTemplateProxy.getValue(verifyCodeKey);
+        if (StringUtils.isBlank(code) || code.equals("-1") ||
+                !code.equals(updatePasswordDTO.getVerifyCode())) {
+            return Result.failed(ResultCode.USER_VERIFYCODE_ERROR);
+        }
+        // 如果校验成功需要删除验证码
+        redisTemplateProxy.delete(verifyCodeKey);
         String oldPasswordEncoded = userMapper.findPasswordById(userId);
         if (!passwordEncoder.matches(updatePasswordDTO.getOldPassword(), oldPasswordEncoded)) {
             return Result.failed(ResultCode.USER_OLD_PASSWORD_ERROR, "旧密码错误");

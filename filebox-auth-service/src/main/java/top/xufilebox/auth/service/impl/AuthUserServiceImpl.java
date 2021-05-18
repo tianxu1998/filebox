@@ -68,7 +68,7 @@ public class AuthUserServiceImpl extends ServiceImpl<UserMapper, User> implement
     @ReadOnly
     public Result<Map<String, String>> login(LoginDTO loginDTO) {
         String verifyCode = redisTemplateProxy.getValue(loginDTO.getVerifyCodeKey());
-        if (verifyCode == null || verifyCode.equals("") || verifyCode.equals("-1") || !verifyCode.equals(loginDTO.getVerifyCode())) {
+        if (StringUtils.isBlank(verifyCode) || verifyCode.equals("-1") || !verifyCode.equals(loginDTO.getVerifyCode())) {
             return Result.failed(ResultCode.USER_VERIFYCODE_ERROR);
         }
         redisTemplateProxy.delete(loginDTO.getVerifyCodeKey());

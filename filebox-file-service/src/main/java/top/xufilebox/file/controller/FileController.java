@@ -204,6 +204,10 @@ public class FileController {
         return fileService.deleteDir(userId, dirId);
     }
 
+    @PostMapping("/moveFile")
+    public Result<String> moveFiles(@RequestHeader("userId") String userId, @RequestBody MoveFileDTO moveFileDTO) {
+        return fileService.moveFiles(userId, moveFileDTO);
+    }
 
 
 
