@@ -2,6 +2,7 @@ package top.xufilebox.common.redis;
 
 import io.micrometer.core.instrument.util.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -9,17 +10,14 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import redis.clients.jedis.JedisPoolConfig;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @description:
  * @author: alextian
  * @create: 2020-12-19 20:50
  **/
 @Configuration
+@RefreshScope
 public class RedisConfiguration {
-
     @Value("${spring.redis.pool.max-idle}")
     private int maxIdle;
     @Value("${spring.redis.pool.max-active}")

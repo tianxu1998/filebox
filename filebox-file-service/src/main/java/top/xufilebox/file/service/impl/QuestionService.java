@@ -3,6 +3,7 @@ package top.xufilebox.file.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import top.xufilebox.common.dto.QuestionDTO;
 import top.xufilebox.common.dto.SendMailDTO;
@@ -20,6 +21,7 @@ import java.util.*;
  **/
 @Service
 @Slf4j
+@RefreshScope
 public class QuestionService {
     @Value("#{${filebox.question.questionsMap}}")
     private Map<String, String> questionsMap;

@@ -2,6 +2,7 @@ package top.xufilebox.mail.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/mail")
+@RefreshScope
 public class MailController {
     @Autowired
     JavaMailSender mailSender;

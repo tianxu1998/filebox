@@ -2,6 +2,7 @@ package top.xufilebox.file.util;
 
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
@@ -21,6 +22,7 @@ import javax.crypto.spec.SecretKeySpec;
  * @create: 2021-02-26 16:33
  **/
 @Component
+@RefreshScope
 public class AESUtil {
 
     @Value("${url.encoder.key}")
