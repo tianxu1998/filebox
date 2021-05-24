@@ -533,7 +533,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
     }
 
 
-    @ReadOnly
+//    @ReadOnly
     public Result<ShareInfoDTO> getShareInfo(String userId) {
         ShareInfoDTO data = new ShareInfoDTO();
         List<ShareInfoItem> items = shareMapper.getSharInfo(Integer.valueOf(userId));
@@ -609,6 +609,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
     public Result<String> moveFiles(String userId, MoveFileDTO moveFileDTO) {
         // 检查是否对应文件的拥有者
         LambdaQueryWrapper<File> checkOwnerWrapper = Wrappers.lambdaQuery();
+        if (moveFileDTO.getFileIds() == null || moveFileDTO.getFileIds().isEmpty()) {
+            return Result.failed(ResultCode.FAILED);
+        }
         checkOwnerWrapper.in(File::getFileId, moveFileDTO.getFileIds())
                         .eq(File::getOwner, Integer.valueOf(userId));
         Integer count = fileMapper.selectCount(checkOwnerWrapper);

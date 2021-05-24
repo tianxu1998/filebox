@@ -64,4 +64,22 @@ eureka:
 
 # 白名单， 用,分隔， 中间不可加空格
 filebox:
-  allowPaths: /auth/*,/auth/userExist/*
+  allowPaths: /auth/*,/auth/userExist/*,/file/share/decodeUrl/*
+
+filters:
+  # 熔断降级配置
+  - name: Hystrix
+    args:
+      name : default
+      fallbackUri: 'forward:/defaultfallback'
+
+# hystrix 信号量隔离，3秒后自动超时
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          thread:
+            timeoutInMilliseconds: 3000
+  shareSecurityContext: true
