@@ -125,7 +125,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         if (integer > 0) {
             return Result.success();
         }
-
         // 上传到fastdfs
         MultipartFile file = chunk.getFile();
         Integer chunkNumber = chunk.getChunkNumber();
@@ -138,7 +137,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         String groupName = fastDFSUtil.randomGroupName();
         // 存到fastdfs
         StorePath storePath = storageClient.uploadFile(groupName, inputStream, chunk.getCurrentChunkSize(), ext);
-
         // 持久化chunk存储信息到mysql
         Block newBlock = new Block();
         newBlock.setBlockSize(chunk.getCurrentChunkSize());
@@ -151,7 +149,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         newBlock.setCreateTime(LocalDateTime.now());
         newBlock.setUpdateBy(Integer.valueOf(userId));
         newBlock.setCreateBy(Integer.valueOf(userId));
-
         blockMapper.insert(newBlock);
         return Result.success();
     }
