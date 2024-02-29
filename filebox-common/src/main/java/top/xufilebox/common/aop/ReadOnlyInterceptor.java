@@ -18,8 +18,15 @@ import top.xufilebox.common.annotation.ReadOnly;
 @Aspect
 @Component
 public class ReadOnlyInterceptor implements Ordered {
-    private static final Logger log= LoggerFactory.getLogger(ReadOnlyInterceptor.class);
+    private static final Logger log = LoggerFactory.getLogger(ReadOnlyInterceptor.class);
 
+    /**
+     * 对于有ReadOnly注解的方法，使用从库
+     * @param joinPoint
+     * @param readOnly
+     * @return
+     * @throws Throwable
+     */
     @Around("@annotation(readOnly)")
     public Object setRead(ProceedingJoinPoint joinPoint, ReadOnly readOnly) throws Throwable{
         DynamicDataSourceContextHolder.clear();

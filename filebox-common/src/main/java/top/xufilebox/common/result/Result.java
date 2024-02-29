@@ -1,10 +1,15 @@
 package top.xufilebox.common.result;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * @description:
  * @author: alextian
  * @create: 2020-12-15 18:31
  **/
+@Setter
+@Getter
 public class Result<T> {
     private String msg;
     private String code;
@@ -71,28 +76,4 @@ public class Result<T> {
     }
 
 
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
-    }
 }
