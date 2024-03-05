@@ -208,30 +208,4 @@ public class FileController {
         return fileService.moveFiles(userId, moveFileDTO);
     }
 
-
-
-//    @Autowired
-//    TrackerClient trackerClient;
-//    @Autowired
-//    FastFileStorageClient storageClient;
-//    @Autowired
-//    BlockMapper blockMapper;
-//    @RequestMapping("/deleteAll")
-//    public Result deleteAllFile() {
-//        LambdaQueryWrapper<Block> queryWrapper = new LambdaQueryWrapper<>();
-//        List<Block> blocks = blockMapper.selectList(queryWrapper);
-//        System.out.println(trackerClient.listGroups().get(0));
-//        for (Block block : blocks) {
-//            storageClient.deleteFile(block.getDfsPath());
-//        }
-////        storageClient.queryFileInfo("group1", "");
-//        System.out.println(trackerClient.listGroups().get(0));
-//        return Result.success();
-//    }
-//    @RequestMapping("/get")
-//    public Result getFile() {
-//        FileInfo group1 = storageClient.queryFileInfo("group1", "M00/00/03/rBgP92AgDPOANnQeAnW7xmFxDMU416.pdf");
-//        return Result.success(ResultCode.SUCCESS, group1.toString());
-//    }
-
 }
