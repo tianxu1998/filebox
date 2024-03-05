@@ -61,14 +61,13 @@ public class FileController {
 
     /**
      * 上传文件check， 秒传的实现得益于此
-     * @param request
      * @param chunk
      * @param userId
      * @return
      * @throws IOException
      */
     @GetMapping(value = "/uploadFile")
-    public Result uploadTest(HttpServletRequest request,Chunk chunk, @RequestHeader("userId") String userId) throws IOException {
+    public Result uploadTest(Chunk chunk, @RequestHeader("userId") String userId) {
         return fileService.uploadFileTest(chunk, userId);
     }
 
