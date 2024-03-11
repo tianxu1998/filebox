@@ -115,7 +115,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
     }
 
     @Transactional
-//    加synchronized避免分片重试时存在并发问题，导致重复上传
+//    加synchronized避免分片重试时存在并发问题，导致重复上传 TODO 应该加分布式锁
     public synchronized Result uploadFile(Chunk chunk, String userId) throws IOException {
         // 如果此块分片已经上传过了  无需再次上传
         String fileName = chunk.getIdentifier() + "_" + chunk.getChunkNumber();
