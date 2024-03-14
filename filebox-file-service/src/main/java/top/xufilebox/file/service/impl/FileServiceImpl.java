@@ -599,8 +599,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         deleteFileWrapper.eq(File::getParentDirId, Integer.valueOf(dirId));
         fileMapper.delete(deleteFileWrapper);
         // 删除当前文件夹
-        directoryMapper.deleteById(Integer.valueOf(dirId));
-        return Result.success();
+        int row = directoryMapper.deleteById(Integer.valueOf(dirId));
+        return row == 1 ? Result.success() : Result.failed();
     }
 
     public Result<String> moveFiles(String userId, MoveFileDTO moveFileDTO) {
