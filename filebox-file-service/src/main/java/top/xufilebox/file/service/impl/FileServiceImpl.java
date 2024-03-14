@@ -149,8 +149,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         newBlock.setCreateTime(LocalDateTime.now());
         newBlock.setUpdateBy(Integer.valueOf(userId));
         newBlock.setCreateBy(Integer.valueOf(userId));
-        blockMapper.insert(newBlock);
-        return Result.success();
+        int row = blockMapper.insert(newBlock);
+        return row == 1 ? Result.success() : Result.failed();
     }
 
     /**
