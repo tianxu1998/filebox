@@ -74,6 +74,4 @@ public class Result<T> {
         result.setData(data);
         return result;
     }
-
-
 }
